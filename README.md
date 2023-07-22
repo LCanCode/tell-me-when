@@ -16,7 +16,7 @@ Individual
 
 ## Project Description
 
-This app allows users to create tasks/ to do items, organizes them, and integrates them directly into their calendar. 
+This app allows users to create tasks/ to do items, organize them, and integrate them directly into their calendar. 
 
 
 ## MVP Feature Set
