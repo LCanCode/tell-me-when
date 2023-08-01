@@ -11,12 +11,20 @@ import React, { useEffect, useState } from "react";
 import { doc, getDoc, getDocs, addDoc, collection } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../firebaseConfig";
 import Board from "../components/Board";
-import { firebase } from "../../firebaseConfig"
+import { firebase } from "../../firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
 
-const AllBoards = () => {
+const AllBoards = ({ navigation }) => {
 	const [board, setBoard] = useState([]);
 	const [boards, setBoards] = useState([]);
 	const boardRef = firebase.firestore().collection("boards");
+
+	const addBoard = async () => {
+		const doc = await addDoc(collection(FIRESTORE_DB, "boards"), {
+			title: board,
+			done: false,
+		});
+	};
 
 	useEffect(() => {
 		boardRef.onSnapshot((querySnapshot) => {
@@ -35,11 +43,15 @@ const AllBoards = () => {
 
 	useEffect(() => {}, []);
 
-	const addBoard = async () => {
-		const doc = await addDoc(collection(FIRESTORE_DB, "boards"), {
-			title: board,
-			done: false,
-		});
+	const renderItems = ({ item }) => {
+		const handlePress = () => {
+			navigation.navigate("Board", { itemId: item.id });
+		};
+		return (
+			<Pressable onPress={handlePress} style={{ padding: 10 }}>
+				<Text>{item.title}</Text>
+			</Pressable>
+		);
 	};
 
 	return (
@@ -51,17 +63,7 @@ const AllBoards = () => {
 					and space to create a new board
 				</Text>
 				{/* list of all boards */}
-				<FlatList
-					data={boards}
-					renderItem={({ item }) => (
-						<Pressable>
-							<View>
-								<Text> {item.title}</Text>
-								<Text> {item.done}</Text>
-							</View>
-						</Pressable>
-					)}
-				/>
+				<FlatList data={boards} renderItem={renderItems} />
 
 				{/* to create a new board */}
 				<TextInput

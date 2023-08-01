@@ -21,6 +21,7 @@ export default function App() {
 				<Stack.Screen name="Home" component={UserHomeScreen} />
 				<Stack.Screen name="All Boards" component={AllBoards} />
 				<Stack.Screen name="Calendar" component={Calendar} />
+				<Stack.Screen name="Board" component={Board} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
