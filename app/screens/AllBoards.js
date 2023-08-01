@@ -45,7 +45,7 @@ const AllBoards = ({ navigation }) => {
 
 	const renderItems = ({ item }) => {
 		const handlePress = () => {
-			navigation.navigate("Board", { itemId: item.id, title: item.title });
+			navigation.navigate("Board", { itemId: item.id, title: item.title, description: item.description });
 		};
 		return (
 			<Pressable onPress={handlePress} style={{ padding: 10 }}>
