@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { useRoute } from "@react-navigation/native";
+import NewList from "./NewList";
 
 const Board = ({ navigation }) => {
 	const route = useRoute();
@@ -8,9 +9,17 @@ const Board = ({ navigation }) => {
 
 	return (
 		<View>
-			<Text>{title}</Text>
-			<Text>{description}</Text>
+      <View>
+			<Text>Board Title: {title}</Text>
+			<Text>Board Description: {description}</Text>
+      </View>
+
+      <View>
+        <NewList />
+      </View>
 		</View>
+
+    
 	);
 };
 
