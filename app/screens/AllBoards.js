@@ -12,44 +12,45 @@ import { doc, getDoc, getDocs, addDoc, collection } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../firebaseConfig";
 import Board from "../components/Board";
 import { firebase } from "../../firebaseConfig";
-import { useNavigation } from "@react-navigation/native";
 
 const AllBoards = ({ navigation }) => {
-	const [board, setBoard] = useState([]);
+	const [board, setBoard] = useState([{ title: "", description: "" }]);
 	const [boards, setBoards] = useState([]);
 	const boardRef = firebase.firestore().collection("boards");
 
 	const addBoard = async () => {
-		const doc = await addDoc(collection(FIRESTORE_DB, "boards"), {
-			title: board,
-			done: false,
-		});
+		if (board.title && board.description) {
+			const doc = await addDoc(collection(FIRESTORE_DB, "boards"), {
+				title: board.title,
+				description: board.description,
+			});
+			setBoard({ title: "", description: "" });
+		}
 	};
 
 	useEffect(() => {
 		boardRef.onSnapshot((querySnapshot) => {
 			const boards = [];
 			querySnapshot.forEach((doc) => {
-				const { title, done } = doc.data();
+				const { title, description } = doc.data();
 				boards.push({
 					id: doc.id,
 					title,
-					done,
+					description,
 				});
 			});
 			setBoards(boards);
 		});
 	}, []);
 
-	useEffect(() => {}, []);
-
 	const renderItems = ({ item }) => {
 		const handlePress = () => {
-			navigation.navigate("Board", { itemId: item.id });
+			navigation.navigate("Board", { itemId: item.id, title: item.title });
 		};
 		return (
 			<Pressable onPress={handlePress} style={{ padding: 10 }}>
 				<Text>{item.title}</Text>
+				<Text> description: {item.description}</Text>
 			</Pressable>
 		);
 	};
@@ -57,11 +58,6 @@ const AllBoards = ({ navigation }) => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.form}>
-				<Text>
-					{" "}
-					All Boards is the home page that shows all boards a user has access to
-					and space to create a new board
-				</Text>
 				{/* list of all boards */}
 				<FlatList data={boards} renderItem={renderItems} />
 
@@ -69,8 +65,14 @@ const AllBoards = ({ navigation }) => {
 				<TextInput
 					style={styles.input}
 					placeholder="Add new board"
-					onChangeText={(text) => setBoard(text)}
-					value={board}
+					onChangeText={(text) => setBoard({ ...board, title: text })}
+					value={board.title}
+				/>
+				<TextInput
+					style={styles.input}
+					placeholder="New board description"
+					onChangeText={(text) => setBoard({ ...board, description: text })}
+					value={board.description}
 				/>
 				<Button
 					onPress={() => addBoard()}

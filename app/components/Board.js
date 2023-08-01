@@ -1,12 +1,16 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from "react-native";
+import React from "react";
+import { useRoute } from "@react-navigation/native";
 
 const Board = ({ navigation }) => {
-  return (
-    <View>
-      <Text>This Board has cards organized into lists </Text>
-    </View>
-  )
-}
+	const route = useRoute();
+	const { title } = route.params;
 
-export default Board
+	return (
+		<View>
+			<Text>{title}</Text>
+		</View>
+	);
+};
+
+export default Board;
