@@ -16,7 +16,7 @@ export default function App() {
 
 	return (
 		<NavigationContainer>
-			<Stack.Navigator initialRouteName="Home">
+			<Stack.Navigator initialRouteName="Lo">
 				<Stack.Screen name="Login" component={Login} />
 				<Stack.Screen name="Home" component={UserHomeScreen} />
 				<Stack.Screen name="All Boards" component={AllBoards} />
@@ -27,11 +27,3 @@ export default function App() {
 	);
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// }

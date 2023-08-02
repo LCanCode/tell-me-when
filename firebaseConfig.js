@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-// import { getAuth} from "firebase/auth";
+import { getAuth} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
@@ -28,7 +28,7 @@ if (!firebase.apps.length){
 // see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase
 export const FIREBASE_APP = initializeApp(firebaseConfig);
 export const FIRESTORE_DB = getFirestore(FIREBASE_APP);
-// export const FIREBASE_AUTH = getAuth(FIREBASE_APP);
+export const FIREBASE_AUTH = getAuth(FIREBASE_APP);
 export { firebase };
 
 
