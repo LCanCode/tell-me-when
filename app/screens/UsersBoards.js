@@ -12,7 +12,7 @@ import { getDocs, addDoc, collection, query } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../firebaseConfig";
 import { firebase, FIREBASE_AUTH } from "../../firebaseConfig";
 
-const AllBoards = ({ navigation }) => {
+const UsersBoards = ({ navigation }) => {
 	const [board, setBoard] = useState({ title: "", description: "" });
 	const [boards, setBoards] = useState([]);
 	const [userBoards, setUserBoards] = useState([]);
@@ -116,7 +116,7 @@ const AllBoards = ({ navigation }) => {
 	);
 };
 
-export default AllBoards;
+export default UsersBoards;
 
 const styles = StyleSheet.create({
 	container: {

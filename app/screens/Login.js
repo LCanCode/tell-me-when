@@ -96,7 +96,7 @@ const Login = ({ navigation }) => {
 				<Pressable
 					onPress={() => {
 						signIn();
-						navigation.navigate("All Boards");
+						navigation.navigate("Users Boards");
 					}}
 				>
 					{/* need way to validate if user has an account then proceed to all boards*/}
