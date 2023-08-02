@@ -8,7 +8,15 @@ import {
 	Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { doc, getDoc, getDocs, addDoc, collection } from "firebase/firestore";
+import {
+	doc,
+	getDoc,
+	getDocs,
+	addDoc,
+	collection,
+	query,
+	where,
+} from "firebase/firestore";
 import { FIRESTORE_DB } from "../../firebaseConfig";
 import Board from "../components/Board";
 import { firebase, FIREBASE_AUTH } from "../../firebaseConfig";
@@ -16,19 +24,11 @@ import { firebase, FIREBASE_AUTH } from "../../firebaseConfig";
 const AllBoards = ({ navigation }) => {
 	const [board, setBoard] = useState([{ title: "", description: "" }]);
 	const [boards, setBoards] = useState([]);
+	const [userBoards, setUserBoards] = useState([]);
 	const boardRef = firebase.firestore().collection("boards");
 	const auth = FIREBASE_AUTH;
 
-	// const addBoard = async () => {
-	// 	if (board.title && board.description) {
-	// 		const doc = await addDoc(collection(FIRESTORE_DB, "boards"), {
-	// 			title: board.title,
-	// 			description: board.description,
-	// 		});
-	// 		setBoard({ title: "", description: "" });
-	// 	}
-	// };
-
+	// to create a new board associated with a userID
 	const newBoard = async () => {
 		try {
 			const userId = auth.currentUser.uid;
@@ -49,20 +49,49 @@ const AllBoards = ({ navigation }) => {
 		}
 	};
 
+	// to fetch all boards associated with a userID
 	useEffect(() => {
-		boardRef.onSnapshot((querySnapshot) => {
-			const boards = [];
-			querySnapshot.forEach((doc) => {
-				const { title, description } = doc.data();
-				boards.push({
-					id: doc.id,
-					title,
-					description,
+		const fetchUserBoards = async () => {
+			try {
+				const userId = auth.currentUser.uid;
+				const userBoardsCollection = collection(
+					FIRESTORE_DB,
+					"users",
+					userId,
+					"boards"
+				);
+				const q = query(userBoardsCollection);
+				const querySnapshot = await getDocs(q);
+
+				const userBoards = [];
+				querySnapshot.forEach((doc) => {
+					const { title, description } = doc.data();
+					userBoards.push({ id: doc.id, title, description });
 				});
-			});
-			setBoards(boards);
-		});
+				setUserBoards(userBoards);
+				console.log("user boards:", userBoards);
+			} catch (error) {
+				console.log("error fetching user boards:", error);
+			}
+		};
+		fetchUserBoards();
 	}, []);
+
+	// useEffect(() => {
+	// 	const boardRef = firebase.firestore().collection("boards");
+	// 	boardRef.onSnapshot((querySnapshot) => {
+	// 		const boards = [];
+	// 		querySnapshot.forEach((doc) => {
+	// 			const { title, description } = doc.data();
+	// 			boards.push({
+	// 				id: doc.id,
+	// 				title,
+	// 				description,
+	// 			});
+	// 		});
+	// 		setBoards(boards);
+	// 	});
+	// }, []);
 
 	const renderItems = ({ item }) => {
 		const handlePress = () => {
@@ -83,8 +112,9 @@ const AllBoards = ({ navigation }) => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.form}>
-				{/* list of all boards */}
-				<FlatList data={boards} renderItem={renderItems} />
+
+				{/* list of all users boards */}
+				<FlatList data={userBoards} renderItem={renderItems} />
 
 				{/* to create a new board */}
 				<TextInput
