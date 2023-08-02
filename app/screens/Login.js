@@ -54,7 +54,7 @@ const Login = ({ navigation }) => {
 			alert("Succesful sign up! Use your email and password to log in.");
 			createUserDocument(auth.currentUser.uid, email);
 		} catch (error) {
-			alert("Sign up failed:" + error.message);
+			alert("Sign up failed:", error.message);
 		}
 	};
 
@@ -63,7 +63,7 @@ const Login = ({ navigation }) => {
 			await signInWithEmailAndPassword(auth, email, password);
 			fetchUserDocument(auth.currentUser.uid);
 		} catch (error) {
-			alert("Sign in failed:" + error.message);
+			alert("Sign in failed:",  error.message);
 		}
 	};
 

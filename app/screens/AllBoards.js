@@ -11,20 +11,41 @@ import React, { useEffect, useState } from "react";
 import { doc, getDoc, getDocs, addDoc, collection } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../firebaseConfig";
 import Board from "../components/Board";
-import { firebase } from "../../firebaseConfig";
+import { firebase, FIREBASE_AUTH } from "../../firebaseConfig";
 
 const AllBoards = ({ navigation }) => {
 	const [board, setBoard] = useState([{ title: "", description: "" }]);
 	const [boards, setBoards] = useState([]);
 	const boardRef = firebase.firestore().collection("boards");
+	const auth = FIREBASE_AUTH;
 
-	const addBoard = async () => {
-		if (board.title && board.description) {
-			const doc = await addDoc(collection(FIRESTORE_DB, "boards"), {
+	// const addBoard = async () => {
+	// 	if (board.title && board.description) {
+	// 		const doc = await addDoc(collection(FIRESTORE_DB, "boards"), {
+	// 			title: board.title,
+	// 			description: board.description,
+	// 		});
+	// 		setBoard({ title: "", description: "" });
+	// 	}
+	// };
+
+	const newBoard = async () => {
+		try {
+			const userId = auth.currentUser.uid;
+			const userBoardsCollection = collection(
+				FIRESTORE_DB,
+				"users",
+				userId,
+				"boards"
+			);
+			await addDoc(userBoardsCollection, {
 				title: board.title,
 				description: board.description,
 			});
 			setBoard({ title: "", description: "" });
+			console.log("Board created");
+		} catch (error) {
+			console.log("Error creating board:", error);
 		}
 	};
 
@@ -45,7 +66,11 @@ const AllBoards = ({ navigation }) => {
 
 	const renderItems = ({ item }) => {
 		const handlePress = () => {
-			navigation.navigate("Board", { itemId: item.id, title: item.title, description: item.description });
+			navigation.navigate("Board", {
+				itemId: item.id,
+				title: item.title,
+				description: item.description,
+			});
 		};
 		return (
 			<Pressable onPress={handlePress} style={{ padding: 10 }}>
@@ -75,7 +100,7 @@ const AllBoards = ({ navigation }) => {
 					value={board.description}
 				/>
 				<Button
-					onPress={() => addBoard()}
+					onPress={() => newBoard()}
 					title="Add Board"
 					disabled={board === ""}
 				/>
