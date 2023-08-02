@@ -8,22 +8,28 @@ import {
 	Pressable,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import { FIRESTORE_DB } from "../../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import { addDoc, collection } from "firebase/firestore";
 import { firebase } from "../../firebaseConfig";
 
 const NewList = () => {
 	const [list, setList] = useState({ title: "", description: "" });
 	const [lists, setLists] = useState([]);
+	const auth = FIREBASE_AUTH;
 	// const listRef = firebase.firestore().collection("list");
 
-	const addList = async () => {
-		const doc = await addDoc(collection(FIRESTORE_DB, "list"), {
-			title: list.title,
-			description: list.description,
-		});
-		setList({ title: "", description: "" });
-	};
+	// const addList = async () => {
+	// 	try {
+	// 		const userId = auth.currentUser.uid;
+	// 		const userListCollection
+	// 		const doc = await addDoc(collection(FIRESTORE_DB, "list"), {
+	// 			title: list.title,
+	// 			description: list.description,
+	// 		});
+	// 		setList({ title: "", description: "" });
+
+	// 	}
+	// };
 
 	// useEffect(() => {
 	// 	listRef.onSnapshot((querySnapshot) => {

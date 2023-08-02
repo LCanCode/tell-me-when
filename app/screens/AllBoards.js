@@ -8,50 +8,19 @@ import {
 	Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import {
-	doc,
-	getDoc,
-	getDocs,
-	addDoc,
-	collection,
-	query,
-	where,
-} from "firebase/firestore";
+import { getDocs, addDoc, collection, query } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../firebaseConfig";
-import Board from "../components/Board";
 import { firebase, FIREBASE_AUTH } from "../../firebaseConfig";
 
 const AllBoards = ({ navigation }) => {
-	const [board, setBoard] = useState([{ title: "", description: "" }]);
+	const [board, setBoard] = useState({ title: "", description: "" });
 	const [boards, setBoards] = useState([]);
 	const [userBoards, setUserBoards] = useState([]);
-	const boardRef = firebase.firestore().collection("boards");
 	const auth = FIREBASE_AUTH;
 
-	// to create a new board associated with a userID
-	const newBoard = async () => {
-		try {
-			const userId = auth.currentUser.uid;
-			const userBoardsCollection = collection(
-				FIRESTORE_DB,
-				"users",
-				userId,
-				"boards"
-			);
-			await addDoc(userBoardsCollection, {
-				title: board.title,
-				description: board.description,
-			});
-			setBoard({ title: "", description: "" });
-			console.log("Board created");
-		} catch (error) {
-			console.log("Error creating board:", error);
-		}
-	};
-
-	// to fetch all boards associated with a userID
+	// to get all boards associated with a userID
 	useEffect(() => {
-		const fetchUserBoards = async () => {
+		const getUserBoards = async () => {
 			try {
 				const userId = auth.currentUser.uid;
 				const userBoardsCollection = collection(
@@ -74,24 +43,33 @@ const AllBoards = ({ navigation }) => {
 				console.log("error fetching user boards:", error);
 			}
 		};
-		fetchUserBoards();
+		getUserBoards();
 	}, []);
 
-	// useEffect(() => {
-	// 	const boardRef = firebase.firestore().collection("boards");
-	// 	boardRef.onSnapshot((querySnapshot) => {
-	// 		const boards = [];
-	// 		querySnapshot.forEach((doc) => {
-	// 			const { title, description } = doc.data();
-	// 			boards.push({
-	// 				id: doc.id,
-	// 				title,
-	// 				description,
-	// 			});
-	// 		});
-	// 		setBoards(boards);
-	// 	});
-	// }, []);
+	// to create a new board associated with a userID
+	const newBoard = async () => {
+		try {
+			const userId = auth.currentUser.uid;
+			const userBoardsCollection = collection(
+				FIRESTORE_DB,
+				"users",
+				userId,
+				"boards"
+			);
+			await addDoc(userBoardsCollection, {
+				title: board.title,
+				description: board.description,
+			});
+			setUserBoards(() => [
+				...userBoards,
+				{ id: board.id, title: board.title, description: board.description },
+			]);
+			setBoard({ title: "", description: "" });
+			console.log("Board created");
+		} catch (error) {
+			console.log("Error creating board:", error);
+		}
+	};
 
 	const renderItems = ({ item }) => {
 		const handlePress = () => {
@@ -112,7 +90,6 @@ const AllBoards = ({ navigation }) => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.form}>
-
 				{/* list of all users boards */}
 				<FlatList data={userBoards} renderItem={renderItems} />
 
@@ -132,7 +109,7 @@ const AllBoards = ({ navigation }) => {
 				<Button
 					onPress={() => newBoard()}
 					title="Add Board"
-					disabled={board === ""}
+					disabled={board.title === ""}
 				/>
 			</View>
 		</View>
