@@ -1,25 +1,23 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React from "react";
 import { useRoute } from "@react-navigation/native";
-import NewList from "./NewList";
+import NewList from "./ListScreen";
 
 const Board = ({ navigation }) => {
 	const route = useRoute();
-	const { title, description } = route.params;
+	const { boardId, title, description } = route.params;
 
 	return (
 		<View>
-      <View>
-			<Text>Board Title: {title}</Text>
-			<Text>Board Description: {description}</Text>
-      </View>
+			<View>
+				<Text>Board Title: {title}</Text>
+				<Text>Board Description: {description}</Text>
+			</View>
 
-      <View>
-        <NewList />
-      </View>
+			<View>
+				<ListScreen boardId={boardId}/>
+			</View>
 		</View>
-
-    
 	);
 };
 

@@ -7,6 +7,7 @@ import UsersBoards from "./app/screens/UsersBoards";
 import Login from "./app/screens/Login";
 import UserHomeScreen from "./app/screens/UserHomeScreen";
 import Calendar from "./app/screens/Calendar";
+import ListScreen from "./app/components/ListScreen";
 import { useState } from "react";
 
 const Stack = createNativeStackNavigator();
@@ -22,6 +23,7 @@ export default function App() {
 				<Stack.Screen name="Users Boards" component={UsersBoards} />
 				<Stack.Screen name="Calendar" component={Calendar} />
 				<Stack.Screen name="Board" component={Board} />
+				<Stack.Screen name="List" component={ListScreen} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

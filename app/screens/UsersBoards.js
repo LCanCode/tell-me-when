@@ -74,7 +74,7 @@ const UsersBoards = ({ navigation }) => {
 	const renderItems = ({ item }) => {
 		const handlePress = () => {
 			navigation.navigate("Board", {
-				itemId: item.id,
+				boardId: item.id,
 				title: item.title,
 				description: item.description,
 			});

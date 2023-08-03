@@ -5,7 +5,7 @@ const UserHomeScreen = ({ navigation }) => {
 	return (
 		<View>
 			<Text> Welcome to my Tell Me When! </Text>
-			<Pressable onPress={() => navigation.navigate("All Boards")}>
+			<Pressable onPress={() => navigation.navigate("Users Boards")}>
 				<Text> My Boards </Text>
 			</Pressable>
 			<Pressable onPress={() => navigation.navigate("Calendar")}>

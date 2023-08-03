@@ -63,7 +63,7 @@ const Login = ({ navigation }) => {
 			await signInWithEmailAndPassword(auth, email, password);
 			fetchUserDocument(auth.currentUser.uid);
 		} catch (error) {
-			alert("Sign in failed:",  error.message);
+			alert("Sign in failed:", error.message);
 		}
 	};
 
@@ -96,7 +96,7 @@ const Login = ({ navigation }) => {
 				<Pressable
 					onPress={() => {
 						signIn();
-						navigation.navigate("Users Boards");
+						navigation.navigate("Home");
 					}}
 				>
 					{/* need way to validate if user has an account then proceed to all boards*/}
