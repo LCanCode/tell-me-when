@@ -17,7 +17,7 @@ import { FIREBASE_AUTH, firebase } from "../../firebaseConfig";
 const Login = ({ navigation }) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [user, setUser] = useState("");
+	// const [user, setUser] = useState("");
 	const auth = FIREBASE_AUTH;
 
 	const createUserDocument = async (userId, email) => {
@@ -99,7 +99,6 @@ const Login = ({ navigation }) => {
 						navigation.navigate("Home");
 					}}
 				>
-					{/* need way to validate if user has an account then proceed to all boards*/}
 
 					<Text> Sign In </Text>
 				</Pressable>
