@@ -6,6 +6,7 @@ import NewTask from "./NewTask";
 
 const Task = ({ listId, boardId }) => {
 	const [listTasks, setListTasks] = useState([]);
+  const [task, setTask] = useState({ title: "", time: 0 });
 	const auth = FIREBASE_AUTH;
 
 	// get all tasks associated with a listId
@@ -23,12 +24,41 @@ const Task = ({ listId, boardId }) => {
 				});
 				setListTasks(listTasks);
 				console.log("user tasks on this list", listTasks);
+        if (listTasks.length == 0) {
+					console.log("this tasks list is empty", listTasks.length);
+				}
 			} catch (error) {
 				console.log("error getting task for ths list", error);
 			}
 		};
 		getListsTasks();
 	}, []);
+
+  // to create a new tasks associate with a listId
+	const newTask = async () => {
+		try {
+			const listTasksCollection = collection(FIRESTORE_DB, "tasks");
+			await addDoc(listTasksCollection, {
+				title: task.title,
+				time: task.time,
+				listId: listId,
+				boardId: boardId,
+			});
+			setListTasks(() => [
+				...listTasks,
+				{
+					title: task.title,
+					time: task.time,
+					listId: listId,
+					boardId: boardId,
+				},
+			]);
+			setTask({ title: "", time: "" });
+			console.log("task created with list id", listId);
+		} catch (error) {
+			console.log("error creating task", error);
+		}
+	};
 
 	return (
 		<View>
@@ -41,8 +71,28 @@ const Task = ({ listId, boardId }) => {
 						</View>
 					)}
 				/>
-				<NewTask listId={listId} boardId={boardId} />
+				{/* <NewTask listId={listId} boardId={boardId} /> */}
 			</View>
+      <View>
+			{/* button to create a new tasks */}
+			<TextInput
+				// style={styles.input}
+				placeholder="New Task Title"
+				onChangeText={(text) => setTask({ ...task, title: text })}
+				value={task.title}
+			/>
+			<TextInput
+				// style={styles.input}
+				placeholder="time it takes for this task"
+				onChangeText={(text) => setTask({ ...task, time: text })}
+				value={task.time}
+			/>
+			<Button
+				onPress={() => newTask()}
+				title="Create Task"
+				disabled={task.titlle === ""}
+			/>
+		</View>
 		</View>
 	);
 };

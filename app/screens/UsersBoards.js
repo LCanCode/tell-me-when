@@ -9,11 +9,12 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { getDocs, addDoc, collection, query } from "firebase/firestore";
-import { FIRESTORE_DB } from "../../firebaseConfig";
-import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
+import NewBoard from "../components/NewBoard";
 
 const UsersBoards = ({ navigation }) => {
 	const [userBoards, setUserBoards] = useState([]);
+	const [board, setBoard] = useState({ title: "", description: "" });
 	const auth = FIREBASE_AUTH;
 
 	// to get all boards associated with a userID
@@ -34,7 +35,8 @@ const UsersBoards = ({ navigation }) => {
 				querySnapshot.forEach((doc) => {
 					const { title, description } = doc.data();
 					userBoards.push({ id: doc.id, title, description });
-				});3
+				});
+				3;
 				setUserBoards(userBoards);
 				console.log("user boards:", userBoards);
 			} catch (error) {
@@ -43,6 +45,31 @@ const UsersBoards = ({ navigation }) => {
 		};
 		getUserBoards();
 	}, []);
+
+	// to create a new board associated with a userID
+	const newBoard = async () => {
+		try {
+			const userId = auth.currentUser.uid;
+			const userBoardsCollection = collection(
+				FIRESTORE_DB,
+				"users",
+				userId,
+				"boards"
+			);
+			await addDoc(userBoardsCollection, {
+				title: board.title,
+				description: board.description,
+			});
+			setUserBoards(() => [
+				...userBoards,
+				{ id: board.id, title: board.title, description: board.description },
+			]);
+			setBoard({ title: "", description: "" });
+			console.log("Board created");
+		} catch (error) {
+			console.log("Error creating board:", error);
+		}
+	};
 
 	// to render each board clickable on page
 	// clicking board title opens that board
@@ -67,7 +94,26 @@ const UsersBoards = ({ navigation }) => {
 			<View style={styles.form}>
 				{/* list of all users boards */}
 				<FlatList data={userBoards} renderItem={renderItems} />
-
+			</View>
+			<View>
+				{/* button to create a new board */}
+				<TextInput
+					// style={styles.input}
+					placeholder="Add new board"
+					onChangeText={(text) => setBoard({ ...board, title: text })}
+					value={board.title}
+				/>
+				<TextInput
+					// style={styles.input}
+					placeholder="New board description"
+					onChangeText={(text) => setBoard({ ...board, description: text })}
+					value={board.description}
+				/>
+				<Button
+					onPress={() => newBoard()}
+					title="Add Board"
+					disabled={board.title === ""}
+				/>
 			</View>
 		</View>
 	);

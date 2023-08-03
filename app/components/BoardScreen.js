@@ -4,8 +4,9 @@ import { useRoute } from "@react-navigation/native";
 import ListScreen from "../screens/ListScreen";
 import Task from "./Task";
 import NewTask from "./NewTask";
+import NewList from "./NewList";
 
-const Board = ({ navigation }) => {
+const BoardScreen = ({ navigation }) => {
 	const route = useRoute();
 	const { boardId, title, description } = route.params;
 
@@ -17,10 +18,11 @@ const Board = ({ navigation }) => {
 			</View>
 
 			<View>
+				{/* <NewList boardId={boardId}/> */}
 				<ListScreen boardId={boardId} />
 			</View>
 		</View>
 	);
 };
 
-export default Board;
+export default BoardScreen;

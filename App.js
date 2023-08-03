@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import Board from "./app/components/Board";
+import BoardScreen from "./app/components/BoardScreen";
 import UsersBoards from "./app/screens/UsersBoards";
 import Login from "./app/screens/Login";
 import UserHomeScreen from "./app/screens/UserHomeScreen";
@@ -21,7 +21,7 @@ export default function App() {
 				<Stack.Screen name="Home" component={UserHomeScreen} />
 				<Stack.Screen name="Users Boards" component={UsersBoards} />
 				<Stack.Screen name="Calendar" component={Calendar} />
-				<Stack.Screen name="Board" component={Board} />
+				<Stack.Screen name="Board" component={BoardScreen} />
 				<Stack.Screen name="List" component={ListScreen} />
 			</Stack.Navigator>
 		</NavigationContainer>
