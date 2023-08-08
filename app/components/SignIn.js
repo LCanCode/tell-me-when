@@ -1,36 +1,18 @@
 import {
 	View,
-	Text,
 	TextInput,
-	StyleSheet,
 	Pressable,
 	KeyboardAvoidingView,
+	Text,
 } from "react-native";
 import React, { useState } from "react";
-import {
-	createUserWithEmailAndPassword,
-	signInWithEmailAndPassword,
-} from "firebase/auth";
 import { FIREBASE_AUTH, firebase } from "../../firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-const Login = ({ navigation }) => {
+const SignIn = ({ navigation }) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	// const [user, setUser] = useState("");
 	const auth = FIREBASE_AUTH;
-
-	const createUserDocument = async (userId, email) => {
-		try {
-			const usersCollection = firebase.firestore().collection("users");
-			const userData = {
-				email: email,
-			};
-			await usersCollection.doc(userId).set(userData);
-			console.log("user doc created");
-		} catch (error) {
-			console.log("Error creating user doc:", error);
-		}
-	};
 
 	const fetchUserDocument = async (userId) => {
 		try {
@@ -47,16 +29,6 @@ const Login = ({ navigation }) => {
 		}
 	};
 
-	const signUp = async () => {
-		try {
-			await createUserWithEmailAndPassword(auth, email, password);
-			alert("Succesful sign up! Use your email and password to log in.");
-			createUserDocument(auth.currentUser.uid, email);
-		} catch (error) {
-			alert("Sign up failed:", error.message);
-		}
-	};
-
 	const signIn = async () => {
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
@@ -67,18 +39,14 @@ const Login = ({ navigation }) => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<View>
 			<KeyboardAvoidingView behavior="padding">
-				<Text>after logging in, directs to AllBoards</Text>
-
 				<TextInput
-					style={styles.input}
 					placeholder="email"
 					onChangeText={(text) => setEmail(text)}
 					value={email}
 				/>
 				<TextInput
-					style={styles.input}
 					placeholder="password"
 					onChangeText={(text) => setPassword(text)}
 					value={password}
@@ -86,19 +54,10 @@ const Login = ({ navigation }) => {
 				/>
 				<Pressable
 					onPress={() => {
-						signUp();
-						navigation.navigate("Login");
-					}}
-				>
-					<Text> Create an Account</Text>
-				</Pressable>
-				<Pressable
-					onPress={() => {
 						signIn();
 						navigation.navigate("Home");
 					}}
 				>
-
 					<Text> Sign In </Text>
 				</Pressable>
 			</KeyboardAvoidingView>
@@ -106,21 +65,4 @@ const Login = ({ navigation }) => {
 	);
 };
 
-export default Login;
-
-const styles = StyleSheet.create({
-	container: {
-		marginHorizontal: 20,
-		flexDirection: "column",
-		paddingVertical: 20,
-	},
-
-	input: {
-		marginVertical: 4,
-		borderWidth: 1,
-		borderRadius: 4,
-		height: 60,
-		padding: 10,
-		backgroundColor: "#fff",
-	},
-});
+export default SignIn;

@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import BoardScreen from "./app/components/BoardScreen";
 import UsersBoards from "./app/screens/UsersBoards";
-import Login from "./app/screens/Login";
+import LoginScreen from "./app/screens/LoginScreen";
 import UserHomeScreen from "./app/screens/UserHomeScreen";
 import Calendar from "./app/screens/Calendar";
 import ListScreen from "./app/screens/ListScreen";
@@ -17,7 +17,7 @@ export default function App() {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator initialRouteName="Login">
-				<Stack.Screen name="Login" component={Login} />
+				<Stack.Screen name="Login" component={LoginScreen} />
 				<Stack.Screen name="Home" component={UserHomeScreen} />
 				<Stack.Screen name="Users Boards" component={UsersBoards} />
 				<Stack.Screen name="Calendar" component={Calendar} />
