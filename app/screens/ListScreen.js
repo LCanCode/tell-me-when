@@ -71,6 +71,7 @@ const ListScreen = ({ boardId }) => {
 					renderItem={({ item }) => (
 						<View>
 							<Text>{item.title}</Text>
+              <Text>List Id = {item.id}</Text>
 							<Task listId={item.id} boardId={item.boardId} />
 						</View>
 					)}

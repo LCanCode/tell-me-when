@@ -9,7 +9,7 @@ const UserHomeScreen = ({ navigation }) => {
 				<Text> My Boards </Text>
 			</Pressable>
 			<Pressable onPress={() => navigation.navigate("Calendar")}>
-				<Text> My Calendar </Text>
+				<Text> My Calendar and Agenda </Text>
 			</Pressable>
 		</View>
 	);

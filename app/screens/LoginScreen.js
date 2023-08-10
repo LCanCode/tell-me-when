@@ -17,9 +17,9 @@ const LoginScreen = ({ navigation }) => {
 			<View>
 				<SignIn navigation={navigation} />
 			</View>
-			<View>
+			{/* <View>
 				<GoogleSignIn navigation={navigation} />
-			</View>
+			</View> */}
 		</View>
 	);
 };

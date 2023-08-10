@@ -7,11 +7,12 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { FIREBASE_AUTH, firebase } from "../../firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const SignIn = ({ navigation }) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	// const [isSignedIn, setIsSignedIn] = useState(false);
 	const auth = FIREBASE_AUTH;
 
 	const fetchUserDocument = async (userId) => {
@@ -29,17 +30,28 @@ const SignIn = ({ navigation }) => {
 		}
 	};
 
-	const signIn = async () => {
+	const handleSignIn = async () => {
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
+			// setIsSignedIn(true);
 			fetchUserDocument(auth.currentUser.uid);
+			console.log("Succesful Sign in");
+			navigation.navigate("Home");
 		} catch (error) {
 			alert("Sign in failed:", error.message);
+			console.log(error);
 		}
 	};
 
 	return (
 		<View>
+			<Pressable
+				onPress={() => {
+					handleSignIn();
+				}}
+			>
+				<Text> Sign In </Text>
+			</Pressable>
 			<KeyboardAvoidingView behavior="padding">
 				<TextInput
 					placeholder="email"
@@ -52,14 +64,6 @@ const SignIn = ({ navigation }) => {
 					value={password}
 					secureTextEntry={true}
 				/>
-				<Pressable
-					onPress={() => {
-						signIn();
-						navigation.navigate("Home");
-					}}
-				>
-					<Text> Sign In </Text>
-				</Pressable>
 			</KeyboardAvoidingView>
 		</View>
 	);

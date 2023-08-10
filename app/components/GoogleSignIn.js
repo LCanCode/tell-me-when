@@ -1,6 +1,5 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, KeyboardAvoidingView } from "react-native";
 import React, { useState } from "react";
-import { KeyboardAvoidingView } from "react-native-web";
 import { FIREBASE_AUTH, firebase } from "../../firebaseConfig";
 import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
 

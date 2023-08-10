@@ -2,9 +2,6 @@ import { View, Text, Pressable } from "react-native";
 import React from "react";
 import { useRoute } from "@react-navigation/native";
 import ListScreen from "../screens/ListScreen";
-import Task from "./Task";
-import NewTask from "./NewTask";
-import NewList from "./NewList";
 
 const BoardScreen = ({ navigation }) => {
 	const route = useRoute();
@@ -15,10 +12,10 @@ const BoardScreen = ({ navigation }) => {
 			<View>
 				<Text>Board Title: {title}</Text>
 				<Text>Board Description: {description}</Text>
+        <Text> boardId: {boardId} </Text>
 			</View>
 
 			<View>
-				{/* <NewList boardId={boardId}/> */}
 				<ListScreen boardId={boardId} />
 			</View>
 		</View>

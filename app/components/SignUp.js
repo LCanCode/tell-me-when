@@ -27,11 +27,28 @@ const SignUp = ({ navigation }) => {
 		}
 	};
 
-	const signUp = async () => {
+	const fetchUserDocument = async (userId) => {
+		try {
+			const usersCollection = firebase.firestore().collection("users");
+			const userDoc = await usersCollection.doc(userId).get();
+			if (userDoc.exists) {
+				const userData = userDoc.data();
+				console.log("userdoc found", userData);
+			} else {
+				console.log("user doc not found");
+			}
+		} catch (error) {
+			console.log("error fetching data:", error);
+		}
+	};
+
+	const handleSignUp = async () => {
 		try {
 			await createUserWithEmailAndPassword(auth, email, password);
-			alert("Succesful sign up! Use your email and password to log in.");
+			alert("Succesful sign up!");
 			createUserDocument(auth.currentUser.uid, email);
+			await fetchUserDocument(auth.currentUser.uid);
+			navigation.navigate("Home");
 		} catch (error) {
 			alert("Sign up failed:", error.message, error.code);
 		}
@@ -39,6 +56,13 @@ const SignUp = ({ navigation }) => {
 
 	return (
 		<View>
+			<Pressable
+				onPress={() => {
+					handleSignUp();
+				}}
+			>
+				<Text> Create an Account </Text>
+			</Pressable>
 			<KeyboardAvoidingView behavior="padding">
 				<TextInput
 					placeholder="email"
@@ -51,14 +75,6 @@ const SignUp = ({ navigation }) => {
 					value={password}
 					secureTextEntry={true}
 				/>
-				<Pressable
-					onPress={() => {
-						signUp();
-						navigation.navigate("Login");
-					}}
-				>
-					<Text> Create an Account </Text>
-				</Pressable>
 			</KeyboardAvoidingView>
 		</View>
 	);

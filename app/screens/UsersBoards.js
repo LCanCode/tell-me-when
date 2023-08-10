@@ -10,7 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { getDocs, addDoc, collection, query } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
-import NewBoard from "../components/NewBoard";
+
 
 const UsersBoards = ({ navigation }) => {
 	const [userBoards, setUserBoards] = useState([]);
@@ -65,7 +65,7 @@ const UsersBoards = ({ navigation }) => {
 				{ id: board.id, title: board.title, description: board.description },
 			]);
 			setBoard({ title: "", description: "" });
-			console.log("Board created");
+			console.log("Board created", id, title, description);
 		} catch (error) {
 			console.log("Error creating board:", error);
 		}

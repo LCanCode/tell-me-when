@@ -2,7 +2,7 @@ import { View, Text, Button, TextInput, FlatList } from "react-native";
 import React, { useState, useEffect } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import { addDoc, collection, where, query, getDocs } from "firebase/firestore";
-import NewTask from "./NewTask";
+
 
 const Task = ({ listId, boardId }) => {
 	const [listTasks, setListTasks] = useState([]);
@@ -34,7 +34,7 @@ const Task = ({ listId, boardId }) => {
 		getListsTasks();
 	}, []);
 
-  // to create a new tasks associate with a listId
+  // to create a new tasks associate with a listId and boardId
 	const newTask = async () => {
 		try {
 			const listTasksCollection = collection(FIRESTORE_DB, "tasks");
