@@ -36,7 +36,6 @@ const UsersBoards = ({ navigation }) => {
 					const { title, description } = doc.data();
 					userBoards.push({ id: doc.id, title, description });
 				});
-				3;
 				setUserBoards(userBoards);
 				console.log("user boards:", userBoards);
 			} catch (error) {
