@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
 import { useRoute } from "@react-navigation/native";
-import ListScreen from "../screens/ListScreen";
+import ListScreen from "./ListScreen";
 
 const BoardScreen = ({ navigation }) => {
 	const route = useRoute();

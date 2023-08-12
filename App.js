@@ -1,8 +1,8 @@
 import { StatusBar } from "expo-status-bar";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import BoardScreen from "./app/components/BoardScreen";
-import UsersBoards from "./app/screens/UsersBoards";
+import BoardScreen from "./app/screens/BoardScreen";
+import UsersBoards from "./app/components/UsersBoards";
 import LoginScreen from "./app/screens/LoginScreen";
 import UserHomeScreen from "./app/screens/UserHomeScreen";
 import CalendarRN from "./app/screens/CalendarRN";

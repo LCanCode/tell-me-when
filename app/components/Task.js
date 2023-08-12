@@ -61,18 +61,18 @@ const Task = ({ listId, boardId }) => {
 			// const dueDated = new Date(task.dueDate);
 			const dateParts = task.dueDate.split("-");
 			const year = parseInt(dateParts[2], 10);
-			const month = parseInt(dateParts[0], 10) - 1;
+      let month = parseInt(dateParts[0], 10);
 			const day = parseInt(dateParts[1], 10);
 
-			const parsedDueDate = new Date(year, month, day);
-	
+			month < 10 ? month = '0' + month : month
+      const agendaDate = year + '-' + month + '-' + day
 
 			await addDoc(listTasksCollection, {
 				title: task.title,
 				time: task.time,
 				listId: listId,
 				boardId: boardId,
-				dueDate: parsedDueDate,
+        agendaDate: agendaDate,
 				createdOn: creationTimestamp,
 			});
 			setListTasks(() => [
@@ -82,7 +82,8 @@ const Task = ({ listId, boardId }) => {
 					time: task.time,
 					listId: listId,
 					boardId: boardId,
-					dueDate: parsedDueDate,
+					dueDate: task.dueDate,
+          agendaDate: agendaDate,
 					createdOn: creationTimestamp,
 				},
 			]);
