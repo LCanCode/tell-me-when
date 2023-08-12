@@ -95,6 +95,23 @@ const Task = ({ listId, boardId }) => {
 		}
 	};
 
+  // to delete a task
+  const deleteTask = async (task) => {
+    try {
+      const taskToDelete = doc(FIRESTORE_DB, "tasks", task.id);
+      await deleteDoc(taskToDelete);
+      setListTasks(() => [...listTasks]);
+
+      console.log("task deleted", task.id);
+    } catch (error) {
+      console.log("error deleting task", error);
+    }
+  };
+};
+
+
+
+
 	return (
 		<View>
 			<View>
