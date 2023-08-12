@@ -10,7 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { getDocs, addDoc, collection, query } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
-
+import tw from "twrnc";
 
 const UsersBoards = ({ navigation }) => {
 	const [userBoards, setUserBoards] = useState([]);
@@ -89,7 +89,7 @@ const UsersBoards = ({ navigation }) => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<View style={tw`p-12 flex`}>
 			<View style={styles.form}>
 				{/* list of all users boards */}
 				<FlatList data={userBoards} renderItem={renderItems} />

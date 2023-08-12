@@ -8,6 +8,7 @@ import {
 import React, { useState } from "react";
 import { FIREBASE_AUTH, firebase } from "../../firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import tw from "twrnc";
 
 const SignUp = ({ navigation }) => {
 	const [email, setEmail] = useState("");
@@ -55,27 +56,40 @@ const SignUp = ({ navigation }) => {
 	};
 
 	return (
-		<View>
-			<Pressable
-				onPress={() => {
-					handleSignUp();
-				}}
-			>
-				<Text> Create an Account </Text>
-			</Pressable>
-			<KeyboardAvoidingView behavior="padding">
-				<TextInput
-					placeholder="email"
-					onChangeText={(text) => setEmail(text)}
-					value={email}
-				/>
-				<TextInput
-					placeholder="password"
-					onChangeText={(text) => setPassword(text)}
-					value={password}
-					secureTextEntry={true}
-				/>
-			</KeyboardAvoidingView>
+		<View style={tw`flex-1 items-center justify-start bg-black`}>
+			<View style={tw`p-8 w-full max-w-xs flex justify-center content-center`}>
+				<KeyboardAvoidingView behavior="padding">
+					<Text style={tw`text-2xl font-bold mb-6 text-white`}>Create an Account</Text>
+					<TextInput
+						style={tw`w-full bg-white rounded-md h-12 px-4 mb-4 mr-40`}
+						placeholderTextColor="#000"
+						placeholder="Enter email"
+						onChangeText={(text) => setEmail(text)}
+						value={email}
+					/>
+					<TextInput
+						style={tw`w-full bg-white rounded-md h-12 px-4 mb-4 mr-40`}
+						placeholderTextColor="#000"
+						placeholder="Create a password"
+						onChangeText={(text) => setPassword(text)}
+						value={password}
+						secureTextEntry={true}
+					/>
+					<Pressable
+						style={tw`h-12 border-2 border-white rounded-md flex flex-row justify-center items-center px-6 my-4.5`}
+						onPress={() => {
+							handleSignUp();
+						}}
+					>
+						<View style={tw`flex-2 flex items-center`}>
+							<Text style={tw`text-white text-base font-medium`}>
+								{" "}
+								Register{" "}
+							</Text>
+						</View>
+					</Pressable>
+				</KeyboardAvoidingView>
+			</View>
 		</View>
 	);
 };

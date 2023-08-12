@@ -107,7 +107,6 @@ const Task = ({ listId, boardId }) => {
       console.log("error deleting task", error);
     }
   };
-};
 
 
 

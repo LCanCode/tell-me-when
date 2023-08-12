@@ -7,6 +7,7 @@ import LoginScreen from "./app/screens/LoginScreen";
 import UserHomeScreen from "./app/screens/UserHomeScreen";
 import CalendarRN from "./app/screens/CalendarRN";
 import ListScreen from "./app/screens/ListScreen";
+import SignUp from "./app/components/SignUp";
 import { useState } from "react";
 
 
@@ -24,6 +25,7 @@ export default function App() {
 				<Stack.Screen name="Calendar" component={CalendarRN} />
 				<Stack.Screen name="Board" component={BoardScreen} />
 				<Stack.Screen name="List" component={ListScreen} />
+				<Stack.Screen name="Sign Up" component={SignUp} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

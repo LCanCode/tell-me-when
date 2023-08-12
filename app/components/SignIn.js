@@ -8,6 +8,7 @@ import {
 import React, { useState } from "react";
 import { FIREBASE_AUTH, firebase } from "../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import tw from 'twrnc';
 
 const SignIn = ({ navigation }) => {
 	const [email, setEmail] = useState("");
@@ -45,26 +46,33 @@ const SignIn = ({ navigation }) => {
 
 	return (
 		<View>
-			<Pressable
-				onPress={() => {
-					handleSignIn();
-				}}
-			>
-				<Text> Sign In </Text>
-			</Pressable>
 			<KeyboardAvoidingView behavior="padding">
 				<TextInput
-					placeholder="email"
+          style={tw`w-full bg-white rounded-md h-12 px-4 mb-4 mr-40`}
+          placeholderTextColor="#000"
+					placeholder="Enter email"
 					onChangeText={(text) => setEmail(text)}
 					value={email}
 				/>
 				<TextInput
-					placeholder="password"
+          style={tw`w-full bg-white rounded-md h-12 px-4 mr-40`}
+          placeholderTextColor="#000"
+					placeholder="Enter password"
 					onChangeText={(text) => setPassword(text)}
 					value={password}
 					secureTextEntry={true}
 				/>
-			</KeyboardAvoidingView>
+			<Pressable
+        style={tw`h-12 border-2 border-white rounded-md flex flex-row justify-center items-center px-6 my-4.5`}
+				onPress={() => {
+          handleSignIn();
+				}}
+			>
+        <View style={tw`flex-2 flex items-center`}> 
+        <Text style={tw`text-white text-base font-medium`}> Sign In </Text>
+        </View>
+			</Pressable>
+      </KeyboardAvoidingView>
 		</View>
 	);
 };
