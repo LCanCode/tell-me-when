@@ -81,38 +81,47 @@ const UsersBoards = ({ navigation }) => {
 			});
 		};
 		return (
-			<Pressable onPress={handlePress} style={{ padding: 10 }}>
-				<Text>{item.title}</Text>
-				<Text> description: {item.description}</Text>
+			<Pressable onPress={handlePress}>
+				<Text style={tw`p-1 text-white`}> {item.title}</Text>
+				<Text style={tw`p-5 text-white`}> description: {item.description}</Text>
 			</Pressable>
 		);
 	};
 
 	return (
-		<View style={tw`p-12 flex`}>
+		<View style={tw`flex-1  bg-black`}>
 			<View style={styles.form}>
 				{/* list of all users boards */}
 				<FlatList data={userBoards} renderItem={renderItems} />
 			</View>
-			<View>
+			<View style={tw`flex-1 pt-15`}>
 				{/* button to create a new board */}
 				<TextInput
-					// style={styles.input}
+					style={tw`text-black bg-white rounded-sm h-9 px-4 mb-1`}
 					placeholder="Add new board"
 					onChangeText={(text) => setBoard({ ...board, title: text })}
 					value={board.title}
 				/>
 				<TextInput
-					// style={styles.input}
+					style={tw`text-black bg-white rounded-sm h-9 px-4 mb-.5 `}
 					placeholder="New board description"
 					onChangeText={(text) => setBoard({ ...board, description: text })}
 					value={board.description}
 				/>
-				<Button
-					onPress={() => newBoard()}
-					title="Add Board"
-					disabled={board.title === ""}
-				/>
+
+				<View>
+					<Pressable
+						style={tw` border-2 border-white rounded-md
+          flex flex-row justify-center items-center px-4 my-1 `}
+						onPress={() => newBoard()}
+						disabled={board.title === ""}
+					>
+						<Text style={tw`text-white text-base font-medium`}>
+							{" "}
+							Add Board{" "}
+						</Text>
+					</Pressable>
+				</View>
 			</View>
 		</View>
 	);
