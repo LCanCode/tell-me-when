@@ -6,15 +6,19 @@ import {
 	StyleSheet,
 	FlatList,
 	Pressable,
+	KeyboardAvoidingView,
+	SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { getDocs, addDoc, collection, query } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import tw from "twrnc";
+import ModalBox from "./ModalBox";
 
 const UsersBoards = ({ navigation }) => {
 	const [userBoards, setUserBoards] = useState([]);
 	const [board, setBoard] = useState({ title: "", description: "" });
+	const [modalVisible, setModalVisible] = useState(false);
 	const auth = FIREBASE_AUTH;
 
 	// to get all boards associated with a userID
@@ -82,68 +86,88 @@ const UsersBoards = ({ navigation }) => {
 		};
 		return (
 			<Pressable onPress={handlePress}>
-				<Text style={tw`p-1 text-white`}> {item.title}</Text>
-				<Text style={tw`p-5 text-white`}> description: {item.description}</Text>
+				<View style={tw`pt-10`}>
+					<View
+						style={tw`w-full text-center flex items-stretch flex-column gap-1 border-double border-white border-2`}
+					>
+						<Text style={tw`p-1 flex-1 text-white text-lg text-center`}>
+							{" "}
+							{item.title}
+						</Text>
+						<Text style={tw`p-2 flex-2 text-white text-xs text-center italic`}>
+							{" "}
+							description: {item.description}
+						</Text>
+					</View>
+				</View>
 			</Pressable>
 		);
 	};
 
 	return (
 		<View style={tw`flex-1  bg-black`}>
-			<View style={styles.form}>
-				{/* list of all users boards */}
-				<FlatList data={userBoards} renderItem={renderItems} />
-			</View>
-			<View style={tw`flex-1 pt-15`}>
-				{/* button to create a new board */}
-				<TextInput
-					style={tw`text-black bg-white rounded-sm h-9 px-4 mb-1`}
-					placeholder="Add new board"
-					onChangeText={(text) => setBoard({ ...board, title: text })}
-					value={board.title}
-				/>
-				<TextInput
-					style={tw`text-black bg-white rounded-sm h-9 px-4 mb-.5 `}
-					placeholder="New board description"
-					onChangeText={(text) => setBoard({ ...board, description: text })}
-					value={board.description}
-				/>
+			<SafeAreaView>
+				<View style={tw`w- text-center flex items-center flex-column gap-1`}>
+					<Text style={tw`text-white text-2xl text-center pt-4 underline`}>
+						{" "}
+						ALL BOARDS{" "}
+					</Text>
 
-				<View>
-					<Pressable
-						style={tw` border-2 border-white rounded-md
-          flex flex-row justify-center items-center px-4 my-1 `}
-						onPress={() => newBoard()}
-						disabled={board.title === ""}
-					>
-						<Text style={tw`text-white text-base font-medium`}>
-							{" "}
-							Add Board{" "}
-						</Text>
-					</Pressable>
+					
+          {/* button to create a new board */}
+					<View style={tw`border-2 border-white`}>
+            <Button
+						style={tw`border-white border-2`}
+						title="add new board"
+						color="blue"
+						onPress={() => {
+              setModalVisible();
+						}}
+            />
+          </View>
+					<ModalBox
+						isOpen={modalVisible}
+						closeModal={() => setModalVisible(false)}
+						title="Create New Board"
+						description="Please enter board details."
+						content={
+							<>
+								<TextInput
+									placeholder="Board Title"
+									value={board.title}
+									onChangeText={(text) => setBoard({ ...board, title: text })}
+								/>
+								<TextInput
+									placeholder="Board Description"
+									value={board.description}
+									onChangeText={(text) =>
+										setBoard({ ...board, description: text })
+									}
+								/>
+								<Pressable
+									onPress={() => {
+										newBoard();
+										setModalVisible(false);
+									}}
+								>
+									<Text>Add Board</Text>
+								</Pressable>
+							</>
+						}
+					/>
 				</View>
-			</View>
+
+				<View style={tw`flex-row items-center  my-4`}>
+					<View
+						style={tw`flex-column flex-1 pt-2 opacity-70 w-96 items-stretch justify-center`}
+					>
+						{/* list of all users boards */}
+						<FlatList data={userBoards} renderItem={renderItems} />
+					</View>
+				</View>
+			</SafeAreaView>
 		</View>
 	);
 };
 
 export default UsersBoards;
-
-const styles = StyleSheet.create({
-	container: {
-		marginHorizontal: 20,
-	},
-	form: {
-		flexDirection: "row",
-		alignItems: "center",
-		marginVertical: 20,
-	},
-	input: {
-		flex: 1,
-		borderWidth: 1,
-		borderRadius: 4,
-		height: 40,
-		padding: 10,
-		backgroundColor: "#fff",
-	},
-});
