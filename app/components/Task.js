@@ -1,4 +1,4 @@
-import { View, Text, Button, TextInput, FlatList } from "react-native";
+import { View, Text, Button, TextInput, FlatList, Pressable } from "react-native";
 import React, { useState, useEffect } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import {
@@ -11,11 +11,14 @@ import {
 } from "firebase/firestore";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
-import moment from "moment";
+import ModalBox from "./ModalBox";
+import tw from "twrnc";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Task = ({ listId, boardId }) => {
 	const [listTasks, setListTasks] = useState([]);
 	const [task, setTask] = useState({ title: "", time: 0 });
+  const [modalVisible, setModalVisible] = useState(false);
 	const auth = FIREBASE_AUTH;
 
 	// get all tasks associated with a listId
@@ -61,18 +64,18 @@ const Task = ({ listId, boardId }) => {
 			// const dueDated = new Date(task.dueDate);
 			const dateParts = task.dueDate.split("-");
 			const year = parseInt(dateParts[2], 10);
-      let month = parseInt(dateParts[0], 10);
+			let month = parseInt(dateParts[0], 10);
 			const day = parseInt(dateParts[1], 10);
 
-			month < 10 ? month = '0' + month : month
-      const agendaDate = year + '-' + month + '-' + day
+			month < 10 ? (month = "0" + month) : month;
+			const agendaDate = year + "-" + month + "-" + day;
 
 			await addDoc(listTasksCollection, {
 				title: task.title,
 				time: task.time,
 				listId: listId,
 				boardId: boardId,
-        agendaDate: agendaDate,
+				agendaDate: agendaDate,
 				createdOn: creationTimestamp,
 			});
 			setListTasks(() => [
@@ -83,7 +86,7 @@ const Task = ({ listId, boardId }) => {
 					listId: listId,
 					boardId: boardId,
 					dueDate: task.dueDate,
-          agendaDate: agendaDate,
+					agendaDate: agendaDate,
 					createdOn: creationTimestamp,
 				},
 			]);
@@ -95,60 +98,79 @@ const Task = ({ listId, boardId }) => {
 		}
 	};
 
-  // to delete a task
-  const deleteTask = async (task) => {
-    try {
-      const taskToDelete = doc(FIRESTORE_DB, "tasks", task.id);
-      await deleteDoc(taskToDelete);
-      setListTasks(() => [...listTasks]);
+	// to delete a task
+	const deleteTask = async (task) => {
+		try {
+			const taskToDelete = doc(FIRESTORE_DB, "tasks", task.id);
+			await deleteDoc(taskToDelete);
+			setListTasks(() => [...listTasks]);
 
-      console.log("task deleted", task.id);
-    } catch (error) {
-      console.log("error deleting task", error);
-    }
-  };
-
-
-
+			console.log("task deleted", task.id);
+		} catch (error) {
+			console.log("error deleting task", error);
+		}
+	};
 
 	return (
-		<View>
-			<View>
+		<View >
+      <SafeAreaView>
+			<View style={tw`p-2`}>
 				<FlatList
 					data={listTasks}
 					renderItem={({ item }) => (
-						<View>
-							<Text>{item.title}</Text>
+						<View style={tw` flex-column bg-zinc-300 border-white rounded-2xl border-2 h-30 w-50 p-10 mb-5`}>
+							<Text style={tw`text-white text-center text-lg`}>{item.title}</Text>
+							<Text style={tw`text-white text-center text-lg`}>{item.agendaDate}</Text>
 						</View>
 					)}
 				/>
 			</View>
-			<View>
-				{/* button to create a new tasks */}
-				<TextInput
-					// style={styles.input}
-					placeholder="New Task Title"
-					onChangeText={(text) => setTask({ ...task, title: text })}
-					value={task.title}
-				/>
-				<TextInput
-					// style={styles.input}
-					placeholder="time it takes for this task"
-					onChangeText={(text) => setTask({ ...task, time: text })}
-					value={task.time}
-				/>
-				<TextInput
-					// style={styles.input}
-					placeholder="When is this task due? mm-dd-yyyy format"
-					onChangeText={(text) => setTask({ ...task, dueDate: text })}
-					value={task.dueDate}
-				/>
+
+			{/* button to create a new tasks */}
+			<View style={tw`border-2 border-white bg-black`}>
 				<Button
-					onPress={() => newTask()}
-					title="Create Task"
-					disabled={task.title === ""}
+					style={tw`border-white border-2`}
+					title="add new task"
+					color="blue"
+					onPress={() => {
+						setModalVisible();
+					}}
 				/>
 			</View>
+			<View>
+				<ModalBox
+					isOpen={modalVisible}
+					closeModal={() => setModalVisible(false)}
+					title="Create New Board"
+					description="Please enter task details."
+					content={
+						<>
+							<TextInput
+								placeholder="New Task Title"
+								onChangeText={(text) => setTask({ ...task, title: text })}
+								value={task.title}
+							/>
+							<TextInput
+								placeholder="time it takes for this task"
+								onChangeText={(text) => setTask({ ...task, time: text })}
+								value={task.time}
+							/>
+							<TextInput
+								placeholder="When is this task due? mm-dd-yyyy format"
+								onChangeText={(text) => setTask({ ...task, dueDate: text })}
+								value={task.dueDate}
+							/>
+							<Pressable
+								onPress={() => { newTask(); setModalVisible(false);}}
+								>
+                  <Text> Add Task </Text>
+                </Pressable>
+							
+						</>
+					}
+				/>
+			</View>
+      </SafeAreaView>
 		</View>
 	);
 };

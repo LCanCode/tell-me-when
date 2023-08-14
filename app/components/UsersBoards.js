@@ -86,7 +86,7 @@ const UsersBoards = ({ navigation }) => {
 		};
 		return (
 			<Pressable onPress={handlePress}>
-				<View style={tw`pt-10`}>
+				<View style={tw`pt-5`}>
 					<View
 						style={tw`w-full text-center flex items-stretch flex-column gap-1 border-double border-white border-2`}
 					>
@@ -107,7 +107,7 @@ const UsersBoards = ({ navigation }) => {
 	return (
 		<View style={tw`flex-1  bg-black`}>
 			<SafeAreaView>
-				<View style={tw`w- text-center flex items-center flex-column gap-1`}>
+				<View style={tw`text-center flex items-center flex-column gap-1 opacity-70`}>
 					<Text style={tw`text-white text-2xl text-center pt-4 underline`}>
 						{" "}
 						ALL BOARDS{" "}
@@ -159,7 +159,7 @@ const UsersBoards = ({ navigation }) => {
 
 				<View style={tw`flex-row items-center  my-4`}>
 					<View
-						style={tw`flex-column flex-1 pt-2 opacity-70 w-96 items-stretch justify-center`}
+						style={tw`flex-column flex-1 pt-1 opacity-90 w-96 items-stretch justify-center`}
 					>
 						{/* list of all users boards */}
 						<FlatList data={userBoards} renderItem={renderItems} />

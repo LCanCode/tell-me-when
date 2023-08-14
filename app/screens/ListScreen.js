@@ -1,12 +1,23 @@
-import { View, Text, Button, TextInput, FlatList } from "react-native";
+import {
+	View,
+	Text,
+	Button,
+	TextInput,
+	FlatList,
+	Pressable,
+	SafeAreaView,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import { addDoc, collection, where, query, getDocs } from "firebase/firestore";
 import Task from "../components/Task";
+import ModalBox from "../components/ModalBox";
+import tw from "twrnc";
 
 const ListScreen = ({ boardId }) => {
 	const [list, setList] = useState({ title: "", description: "" });
 	const [usersLists, setUsersLists] = useState([]);
+	const [modalVisible, setModalVisible] = useState(false);
 	const auth = FIREBASE_AUTH;
 
 	// get all list associated with a boardId
@@ -64,39 +75,78 @@ const ListScreen = ({ boardId }) => {
 
 	return (
 		<View>
-			<View>
-				{/* render all list  */}
-				<FlatList
-					data={usersLists}
-					renderItem={({ item }) => (
-						<View>
-							<Text>{item.title}</Text>
-              <Text>List Id = {item.id}</Text>
-							<Task listId={item.id} boardId={item.boardId} />
-						</View>
-					)}
-				/>
-				<View>
-					{/* button to create a new list */}
-					<TextInput
-						// style={styles.input}
-						placeholder="New List Title"
-						onChangeText={(text) => setList({ ...list, title: text })}
-						value={list.title}
-					/>
-					<TextInput
-						// style={styles.input}
-						placeholder="New List Description"
-						onChangeText={(text) => setList({ ...list, description: text })}
-						value={list.description}
-					/>
-					<Button
-						onPress={() => addList()}
-						title="Create List"
-						disabled={list.title === ""}
+			<SafeAreaView>
+				{/* button to create a new list */}
+				<View style={tw`text-center flex-wrap items-center flex-column gap-1 opacity-70`}>
+          <View style={tw`border-2 border-white items-end`}>
+          <Button
+						title="add new list"
+						color="blue"
+						onPress={() => {
+							setModalVisible();
+						}}
 					/>
 				</View>
-			</View>
+				</View>
+				<View>
+					<ModalBox
+						isOpen={modalVisible}
+						closeModal={() => setModalVisible(false)}
+						title="Create New List"
+						description="Please enter list details."
+						content={
+							<>
+								<TextInput
+									placeholder="New List Title"
+									onChangeText={(text) => setList({ ...list, title: text })}
+									value={list.title}
+								/>
+								<TextInput
+									placeholder="New List Description"
+									onChangeText={(text) =>
+										setList({ ...list, description: text })
+									}
+									value={list.description}
+								/>
+								<Pressable
+									onPress={() => {
+										addList();
+										setModalVisible(false);
+									}}
+								>
+									<Text> Add List </Text>
+								</Pressable>
+							</>
+						}
+					/>
+				</View>
+					{/* render all list  */}
+				<View style={tw`flex-row items-center my-3`}>
+        <View
+						style={tw`flex-column pt-1 opacity-90 w-96 items-center justify-center`}
+					>
+					<FlatList
+						horizontal={true}
+						data={usersLists}
+						renderItem={({ item }) => (
+              <View style={tw`p-2 `}>
+							<View style={tw`h-120 bg-neutral-600 rounded-md border-2 border-white p-5 items-center`}>
+								<Text style={tw`text-white text-center text-lg`}>
+									{item.title}
+								</Text>
+								<Text style={tw`text-white text-center text-xs`}>
+									List Id = {item.id}
+								</Text>
+                <View style={tw``}>
+								<Task listId={item.id} boardId={item.boardId} />
+							</View>
+							</View>
+							</View>
+						)}
+					/>
+				</View>
+				</View>
+			</SafeAreaView>
 		</View>
 	);
 };
