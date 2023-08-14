@@ -169,7 +169,8 @@ const ListScreen = ({ boardId }) => {
 											</Text>
 											<View style={tw`container items-center `}>
 												<Pressable
-													style={tw`p-1 border-2 border-white rounded-lg  w-20 bg-gray-200 h-10 justify-between items-center`}
+													style={tw`p-1 border-2 border-white rounded-lg  
+                          w-20 bg-gray-200 h-10 justify-between items-center`}
 													onPress={() => {
 														deleteList(item.id);
 													}}

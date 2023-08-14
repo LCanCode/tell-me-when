@@ -13,7 +13,7 @@ const ModalBox = ({ isOpen, closeModal, title, description, content }) => {
         onRequestClose={closeModal}>
           
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+        <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, height:500, width: 360}}>
           <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>{title}</Text>
           <Text style={{ fontSize: 14, color: '#888', marginBottom: 20 }}>{description}</Text>
           {content}

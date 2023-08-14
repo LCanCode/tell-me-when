@@ -10,10 +10,11 @@ import {
 	SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getDocs, addDoc, collection, query } from "firebase/firestore";
+import { getDocs, addDoc, collection, query, where, deleteDoc, doc } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import tw from "twrnc";
 import ModalBox from "./ModalBox";
+import deleteList from "../screens/ListScreen";
 
 const UsersBoards = ({ navigation }) => {
 	const [userBoards, setUserBoards] = useState([]);
@@ -48,6 +49,40 @@ const UsersBoards = ({ navigation }) => {
 		};
 		getUserBoards();
 	}, []);
+
+	//to delete a board and associate lists and tasks
+	const deleteBoard = async (boardId) => {
+		try {
+			const listCollection = collection(FIRESTORE_DB, "list");
+			const qList = query(listCollection, where("boardId", "==", boardId));
+			const querySnapshotList = await getDocs(qList);
+			querySnapshotList.forEach(async (doc) => {
+				await deleteDoc(doc.ref);
+			});
+			console.log("list on board", boardId, "deleted");
+
+			const qTask = query(listCollection, where("boardId", "==", boardId));
+			const querySnapshotTask = await getDocs(qTask);
+			querySnapshotTask.forEach(async (doc) => {
+				await deleteDoc(doc.ref);
+			});
+			console.log("task on board", boardId, "deleted");
+
+			const userId = auth.currentUser.uid;
+			const boardToDelete = doc(
+				FIRESTORE_DB,
+				"users",
+				userId,
+				"boards",
+				boardId
+			);
+			await deleteDoc(boardToDelete);
+			setUserBoards(userBoards.filter((board) => board.id !== boardId));
+			console.log("board deleted", boardId);
+		} catch (error) {
+			console.log("error deleting board or list and tasks on list", error);
+		}
+	};
 
 	// to create a new board associated with a userID
 	const newBoard = async () => {
@@ -98,6 +133,13 @@ const UsersBoards = ({ navigation }) => {
 							{" "}
 							description: {item.description}
 						</Text>
+						<Pressable
+							onPress={() => {
+								deleteBoard(item.id);
+							}}
+						>
+							<Text style={tw`text-xs text-blue-900 pt-1`}> Delete Board </Text>
+						</Pressable>
 					</View>
 				</View>
 			</Pressable>
@@ -107,24 +149,25 @@ const UsersBoards = ({ navigation }) => {
 	return (
 		<View style={tw`flex-1  bg-black`}>
 			<SafeAreaView>
-				<View style={tw`text-center flex items-center flex-column gap-1 opacity-70`}>
+				<View
+					style={tw`text-center flex items-center flex-column gap-1 opacity-70`}
+				>
 					<Text style={tw`text-white text-2xl text-center pt-4 underline`}>
 						{" "}
 						ALL BOARDS{" "}
 					</Text>
 
-					
-          {/* button to create a new board */}
+					{/* button to create a new board */}
 					<View style={tw`border-2 border-white`}>
-            <Button
-						style={tw`border-white border-2`}
-						title="add new board"
-						color="blue"
-						onPress={() => {
-              setModalVisible();
-						}}
-            />
-          </View>
+						<Button
+							style={tw`border-white border-2`}
+							title="add new board"
+							color="blue"
+							onPress={() => {
+								setModalVisible();
+							}}
+						/>
+					</View>
 					<ModalBox
 						isOpen={modalVisible}
 						closeModal={() => setModalVisible(false)}
@@ -162,7 +205,9 @@ const UsersBoards = ({ navigation }) => {
 						style={tw`flex-column flex-1 pt-1 opacity-90 w-96 items-stretch justify-center`}
 					>
 						{/* list of all users boards */}
-						<FlatList data={userBoards} renderItem={renderItems} />
+						<View style={tw`m-12`}>
+							<FlatList data={userBoards} renderItem={renderItems} />
+						</View>
 					</View>
 				</View>
 			</SafeAreaView>

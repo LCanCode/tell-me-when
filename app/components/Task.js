@@ -50,6 +50,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 						boardId,
 						dueDate,
 						createdOn,
+						startDate,
 					});
 				});
 				setListTasks(listTasks);
@@ -69,8 +70,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 		try {
 			const listTasksCollection = collection(FIRESTORE_DB, "tasks");
 			const creationTimestamp = firebase.firestore.FieldValue.serverTimestamp();
-			// const createdOnString = creationTimestamp.toDate()
-			// const dueDated = new Date(task.dueDate);
+
 			const dateParts = task.dueDate.split("-");
 			const year = parseInt(dateParts[2], 10);
 			let month = parseInt(dateParts[0], 10);
@@ -85,8 +85,9 @@ const Task = ({ listId, boardId, agendaDate }) => {
 				listId: listId,
 				boardId: boardId,
 				dueDate: task.dueDate,
-				agendaDate: agendaDate,
+				agendaDueDate: agendaDate,
 				createdOn: creationTimestamp,
+				startDate: task.startDate,
 			});
 			setListTasks(() => [
 				...listTasks,
@@ -96,8 +97,9 @@ const Task = ({ listId, boardId, agendaDate }) => {
 					listId: listId,
 					boardId: boardId,
 					dueDate: task.dueDate,
-					agendaDate: agendaDate,
+					agendaDueDate: agendaDate,
 					createdOn: creationTimestamp,
+					startDate: task.startDate,
 				},
 			]);
 			setTask({ title: "", time: "" });
@@ -128,7 +130,9 @@ const Task = ({ listId, boardId, agendaDate }) => {
 				<View
 					style={tw`text-center flex-row items-center justify-center flex-column gap-1 opacity-70 pb-3`}
 				>
-					<View style={tw`border-2 border-white rounded-lg items  bg-gray-300 `}>
+					<View
+						style={tw`border-2 border-white rounded-lg items  bg-gray-300 `}
+					>
 						<Button
 							style={tw`border-white border-2`}
 							title="add new task"
@@ -146,21 +150,30 @@ const Task = ({ listId, boardId, agendaDate }) => {
 							description="Please enter task details."
 							content={
 								<>
-									<TextInput
+									<View style={tw`flex-column pb-5`}>
+                    <TextInput
 										placeholder="New Task Title"
 										onChangeText={(text) => setTask({ ...task, title: text })}
 										value={task.title}
-									/>
-									<TextInput
-										placeholder="time it takes for this task"
+                    />
+                  </View>
+                  
+									<View style={tw`flex-column pb-5`}>
+                  <TextInput
+										placeholder="Estimate of how long this task will take "
 										onChangeText={(text) => setTask({ ...task, time: text })}
 										value={task.time}
 									/>
+                  </View>
+
+                  <View style={tw`flex-column pb-5`}>
 									<TextInput
 										placeholder="When is this task due? mm-dd-yyyy format"
 										onChangeText={(text) => setTask({ ...task, dueDate: text })}
 										value={task.dueDate}
 									/>
+                  </View>
+                  
 									<Pressable
 										onPress={() => {
 											newTask();
