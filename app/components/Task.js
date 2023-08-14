@@ -1,4 +1,11 @@
-import { View, Text, Button, TextInput, FlatList, Pressable } from "react-native";
+import {
+	View,
+	Text,
+	Button,
+	TextInput,
+	FlatList,
+	Pressable,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import {
@@ -8,6 +15,8 @@ import {
 	query,
 	getDocs,
 	Timestamp,
+	deleteDoc,
+	doc,
 } from "firebase/firestore";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
@@ -15,10 +24,10 @@ import ModalBox from "./ModalBox";
 import tw from "twrnc";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Task = ({ listId, boardId }) => {
+const Task = ({ listId, boardId, agendaDate }) => {
 	const [listTasks, setListTasks] = useState([]);
 	const [task, setTask] = useState({ title: "", time: 0 });
-  const [modalVisible, setModalVisible] = useState(false);
+	const [modalVisible, setModalVisible] = useState(false);
 	const auth = FIREBASE_AUTH;
 
 	// get all tasks associated with a listId
@@ -75,6 +84,7 @@ const Task = ({ listId, boardId }) => {
 				time: task.time,
 				listId: listId,
 				boardId: boardId,
+				dueDate: task.dueDate,
 				agendaDate: agendaDate,
 				createdOn: creationTimestamp,
 			});
@@ -99,78 +109,100 @@ const Task = ({ listId, boardId }) => {
 	};
 
 	// to delete a task
-	const deleteTask = async (task) => {
+	const deleteTask = async (taskId) => {
 		try {
-			const taskToDelete = doc(FIRESTORE_DB, "tasks", task.id);
+			const taskToDelete = doc(FIRESTORE_DB, "tasks", taskId);
 			await deleteDoc(taskToDelete);
-			setListTasks(() => [...listTasks]);
+			setListTasks(listTasks.filter((task) => task.id !== taskId));
 
-			console.log("task deleted", task.id);
+			console.log("task deleted", taskId);
 		} catch (error) {
 			console.log("error deleting task", error);
 		}
 	};
 
 	return (
-		<View >
-      <SafeAreaView>
-			<View style={tw`p-2`}>
-				<FlatList
-					data={listTasks}
-					renderItem={({ item }) => (
-						<View style={tw` flex-column bg-zinc-300 border-white rounded-2xl border-2 h-30 w-50 p-10 mb-5`}>
-							<Text style={tw`text-white text-center text-lg`}>{item.title}</Text>
-							<Text style={tw`text-white text-center text-lg`}>{item.agendaDate}</Text>
-						</View>
-					)}
-				/>
-			</View>
-
-			{/* button to create a new tasks */}
-			<View style={tw`border-2 border-white bg-black`}>
-				<Button
-					style={tw`border-white border-2`}
-					title="add new task"
-					color="blue"
-					onPress={() => {
-						setModalVisible();
-					}}
-				/>
-			</View>
-			<View>
-				<ModalBox
-					isOpen={modalVisible}
-					closeModal={() => setModalVisible(false)}
-					title="Create New Board"
-					description="Please enter task details."
-					content={
-						<>
-							<TextInput
-								placeholder="New Task Title"
-								onChangeText={(text) => setTask({ ...task, title: text })}
-								value={task.title}
-							/>
-							<TextInput
-								placeholder="time it takes for this task"
-								onChangeText={(text) => setTask({ ...task, time: text })}
-								value={task.time}
-							/>
-							<TextInput
-								placeholder="When is this task due? mm-dd-yyyy format"
-								onChangeText={(text) => setTask({ ...task, dueDate: text })}
-								value={task.dueDate}
-							/>
-							<Pressable
-								onPress={() => { newTask(); setModalVisible(false);}}
-								>
-                  <Text> Add Task </Text>
-                </Pressable>
-							
-						</>
-					}
-				/>
-			</View>
-      </SafeAreaView>
+		<View style={tw`p-1`}>
+			<SafeAreaView>
+				{/* button to create a new tasks */}
+				<View
+					style={tw`text-center flex-row items-center justify-center flex-column gap-1 opacity-70 pb-3`}
+				>
+					<View style={tw`border-2 border-white rounded-lg items  bg-gray-300 `}>
+						<Button
+							style={tw`border-white border-2`}
+							title="add new task"
+							color="blue"
+							onPress={() => {
+								setModalVisible();
+							}}
+						/>
+					</View>
+					<View>
+						<ModalBox
+							isOpen={modalVisible}
+							closeModal={() => setModalVisible(false)}
+							title="Create New Board"
+							description="Please enter task details."
+							content={
+								<>
+									<TextInput
+										placeholder="New Task Title"
+										onChangeText={(text) => setTask({ ...task, title: text })}
+										value={task.title}
+									/>
+									<TextInput
+										placeholder="time it takes for this task"
+										onChangeText={(text) => setTask({ ...task, time: text })}
+										value={task.time}
+									/>
+									<TextInput
+										placeholder="When is this task due? mm-dd-yyyy format"
+										onChangeText={(text) => setTask({ ...task, dueDate: text })}
+										value={task.dueDate}
+									/>
+									<Pressable
+										onPress={() => {
+											newTask();
+											setModalVisible(false);
+										}}
+									>
+										<Text> Add Task </Text>
+									</Pressable>
+								</>
+							}
+						/>
+					</View>
+				</View>
+				<View style={tw`p-2`}>
+					<FlatList
+						data={listTasks}
+						renderItem={({ item }) => (
+							<View style={tw`bg-white rounded shadow p-3 mb-2`}>
+								<Text style={tw`text-black text-center text-md`}>
+									{item.title}
+								</Text>
+								<Text style={tw`text-black text-center text-xs`}>
+									due: {item.agendaDate}
+								</Text>
+								<View style={tw`container items-center `}>
+									<Pressable
+										style={tw`p-1 border-2 border-white rounded-lg  w-1/2 bg-gray-200 h-10 justify-between items-center`}
+										onPress={() => {
+											deleteTask(item.id);
+										}}
+									>
+										<Text style={tw`text-xs text-blue-900 p-2`}>
+											{" "}
+											Delete Task
+										</Text>
+									</Pressable>
+								</View>
+							</View>
+						)}
+					/>
+				</View>
+			</SafeAreaView>
 		</View>
 	);
 };
