@@ -15,8 +15,9 @@ const DatePickerModal = ({ date }) => {
   };
 
   const handleConfirm = (date) => {
-    console.warn("A date has been picked: ", date);
+    console.log("A date has been picked: ", date);
     hideDatePicker();
+    onDateSelected(date)
   };
 
   return (

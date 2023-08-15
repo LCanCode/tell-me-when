@@ -1,4 +1,12 @@
-import React, { useState } from 'react';
-import { Alert, Modal, Text, Pressable, View, TextInput } from 'react-native';
-import tw from 'twrnc';
+import { View, Text } from 'react-native'
+import React from 'react'
 
+const ModalComponent = () => {
+  return (
+    <View>
+      <Text>ModalComponent</Text>
+    </View>
+  )
+}
+
+export default ModalComponent

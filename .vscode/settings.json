@@ -1,0 +1,8 @@
+{
+	"terminal.integrated.cursorBlinking": false,
+	"workbench.iconTheme": "vs-seti",
+	"workbench.preferredDarkColorTheme": "Visual Studio Light",
+	"workbench.preferredHighContrastColorTheme": "Solarized Dark",
+	"vscode-pets.theme": "forest",
+	"terminal.integrated.tabs.defaultColor": "terminal.ansiBlue"
+}

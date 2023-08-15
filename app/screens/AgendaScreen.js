@@ -1,12 +1,12 @@
-import { View, Text } from "react-native";
+import { View, Text, SafeAreaView} from "react-native";
 import React, { useState, useEffect } from "react";
 import { FIRESTORE_DB } from "../../firebaseConfig";
 import { collection, getDocs, query, doc } from "firebase/firestore";
+import { SectionList } from "react-native";
 
 const AgendaScreen = ({ navigation }) => {
-	const [allTasks, setAllTasks] = useState("");
-  const sectionData = [];
-  const groupTasks = {};
+	const [sectionData, setSectionData] = useState([]);
+  const groupTasks = {}; 
 
 	//get all Tasks from all users boards/list
 	useEffect(() => {
@@ -16,42 +16,25 @@ const AgendaScreen = ({ navigation }) => {
 				const q = query(TasksCollection);
 				const querySnapshot = await getDocs(q);
 
-				const allTasks = [];
 				querySnapshot.forEach((doc) => {
 					const {
 						title,
-						time,
-						listId,
-						boardId,
-						dueDate,
-						createdOn,
-						startDate,
 						agendaDueDate,
 					} = doc.data();
-					allTasks.push({
-						id: doc.id,
-						title,
-						time,
-						listId,
-						boardId,
-						dueDate,
-						createdOn,
-						startDate,
-						agendaDueDate,
-					});
+					
           if (groupTasks[agendaDueDate]) {
             groupTasks[agendaDueDate].data.push(title);
           } else {
             groupTasks[agendaDueDate] = { title: agendaDueDate, data: [title],};
           }
 				});
+        const allTasks = []
         for (const key in groupTasks) {
-          sectionData.push(groupTasks[key]);
+          allTasks.push(groupTasks[key]);
         }
-				setAllTasks(allTasks);
-				console.log("user tasks on this list", allTasks);
+				setSectionData(allTasks);
         console.log("section data", sectionData)
-				if (allTasks.length == 0) {
+				if (sectionData.length == 0) {
 					console.log("this tasks list is empty", allTasks.length);
 				}
 			} catch (error) {
@@ -64,9 +47,22 @@ const AgendaScreen = ({ navigation }) => {
   // take task data and make data object for section list
 
 	return (
-		<View>
+		<SafeAreaView>
 			<Text>AgendaScreen</Text>
-		</View>
+      <SectionList 
+      sections={sectionData}
+      keyExtractor={(item, index) => item +index} 
+      renderItem={({item}) => (
+        <View>
+          <Text>{item}</Text>
+        </View>
+      )}
+      renderSectionHeader={({section: {title}}) => ( 
+        <Text>{title}</Text>
+      )}
+        />
+		</SafeAreaView>
+
 	);
 };
 

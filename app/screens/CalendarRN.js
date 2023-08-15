@@ -3,6 +3,7 @@ import { Calendar, Agenda, CalendarProvider, AgendaList } from "react-native-cal
 import React, { useState, useEffect } from "react";
 import { addDoc, collection, where, query, getDocs } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
+import AgendaScreen from "./AgendaScreen";
 
 const CalendarRN = () => {
 	const [tasksList, setTasksList] = useState([]);
@@ -47,45 +48,8 @@ const CalendarRN = () => {
 	}, []);
 
 	return (
-		<View>
-			<View>
-				{/* <Text>CalendarRN</Text>
-				<Calendar />
-				<FlatList
-					data={tasksList}
-					renderItem={({ item }) => (
-						<View>
-							<Text>{item.title}</Text>
-							<Text>
-								Due date: {item.dueDate.toDate().toLocaleDateString()}
-							</Text>
-							<Text>
-								Created On: {item.createdOn.toDate().toLocaleDateString()}
-							</Text>
-						</View>
-					)}
-				/>
-			</View>
-		</View> */}
-
-		{/* <Calendar />  */}
-    {/* <CalendarProvider> */}
-      {/* <AgendaList /> */}
-    {/* </CalendarProvider> */}
-		<Text> AGENDA </Text>
-    <View style={{ height: 600 }}>
-				<Agenda
-					items={ tasks }
-					renderItem={( item ) => (
-						<View style={{ height: 50 }}>
-							<Text>{item.title}</Text>
-						</View>
-					)}
-				/>
-			</View>
-		</View>
-		</View>
-	);
-};
+    <View></View>
+  )}
+	
 
 export default CalendarRN;
