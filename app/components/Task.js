@@ -5,6 +5,7 @@ import {
 	TextInput,
 	FlatList,
 	Pressable,
+	KeyboardAvoidingView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
@@ -53,7 +54,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 						dueDate,
 						createdOn,
 						startDate,
-            agendaDueDate, 
+						agendaDueDate,
 					} = doc.data();
 					listTasks.push({
 						id: doc.id,
@@ -64,7 +65,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 						dueDate,
 						createdOn,
 						startDate,
-            agendaDueDate,
+						agendaDueDate,
 					});
 				});
 				setListTasks(listTasks);
@@ -86,7 +87,6 @@ const Task = ({ listId, boardId, agendaDate }) => {
 			const creationTimestamp = firebase.firestore.FieldValue.serverTimestamp();
 
 			const timestampDue = new Date(task.dueDate);
-			// const dateParts = stringDate.split("-");
 			const year = timestampDue.getFullYear();
 			let month = String(timestampDue.getMonth() + 1).padStart(2, "0");
 			const day = String(timestampDue.getDate()).padStart(2, "0");
@@ -115,7 +115,12 @@ const Task = ({ listId, boardId, agendaDate }) => {
 					startDate: task.startDate,
 				},
 			]);
-			setTask({ title: "", time: "" });
+			setTask({
+				title: "",
+				time: "",
+				dueDate: new Date(),
+				startDate: new Date(),
+			});
 			console.log("task created with list id", listId);
 			console.log("listTask:", listTasks);
 		} catch (error) {
@@ -138,7 +143,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 
 	return (
 		<View style={tw`p-1`}>
-			<SafeAreaView>
+			<KeyboardAvoidingView>
 				{/* button to create a new tasks */}
 				<View
 					style={tw`text-center flex-row items-center justify-center flex-column gap-1 opacity-70 pb-3`}
@@ -215,7 +220,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 						renderItem={({ item }) => (
 							<View style={tw`bg-white rounded shadow p-3 mb-2`}>
 								<Text style={tw`text-black text-center text-md`}>
-									{item.title} 
+									{item.title}
 								</Text>
 								<Text style={tw`text-black text-center text-xs`}>
 									{item.agendaDueDate}
@@ -237,7 +242,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 						)}
 					/>
 				</View>
-			</SafeAreaView>
+			</KeyboardAvoidingView>
 		</View>
 	);
 };

@@ -5,6 +5,7 @@ import {
 	FlatList,
 	Pressable,
 	SafeAreaView,
+  KeyboardAvoidingView
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
@@ -102,7 +103,7 @@ const ListScreen = ({ boardId }) => {
 
 	return (
 		<View>
-			<SafeAreaView>
+			<KeyboardAvoidingView>
 				{/* button to create a new list */}
 				<View
 					style={tw`text-center flex-wrap items-center flex-column gap-1 opacity-70 ml-4`}
@@ -157,22 +158,23 @@ const ListScreen = ({ boardId }) => {
 					/>
 				</View>
 				{/* render all list  */}
-				<View style={tw`items-center my-1`}>
-					<View style={tw`w-96 items-center justify-center m-1`}>
+				<View style={tw`items-start my-1 flex-1`}>
+					<View style={tw`w-96 items-center justify-center m-1 h-135`}>
 						<FlatList
 							horizontal={true}
 							data={usersLists}
 							renderItem={({ item }) => (
 								<View style={tw`p-1`}>
 									<View style={tw`h-120 border-white items-center m-1`}>
-										<View style={tw`bg-gray-200 w-72 p-4 rounded shadow`}>
-											<Text style={tw`text-black text-center text-lg`}>
-												List Title: {item.title}
+                    <View >
+										<View style={tw`bg-gray-200 w-72 h-10 p-2 rounded shadow flex-wrap`}>
+											<Text style={tw`text-black text-left text-xs`}>
+											{item.title}
 											</Text>
-											<Text style={tw`text-black text-center text-xs`}>
+											{/* <Text style={tw`text-black text-center text-xs`}>
 												List Id = {item.id}
-											</Text>
-											<View style={tw`container items-center `}>
+											</Text> */}
+											
 												<Pressable
 													style={tw`p-1 border-2 border-white rounded-lg  
                           w-20 bg-gray-200 h-10 justify-between items-center`}
@@ -185,6 +187,7 @@ const ListScreen = ({ boardId }) => {
 														Delete List
 													</Text>
 												</Pressable>
+											
 											</View>
 
 											<View style={tw``}>
@@ -201,7 +204,7 @@ const ListScreen = ({ boardId }) => {
 						/>
 					</View>
 				</View>
-			</SafeAreaView>
+			</KeyboardAvoidingView>
 		</View>
 	);
 };
