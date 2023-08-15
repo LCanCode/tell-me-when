@@ -8,7 +8,8 @@ const AgendaScreen = ({ navigation }) => {
   const sectionData = [];
   const groupTasks = {};
 
-	//get all Tasks from all users boards/list
+	//get all Tasks from all users boards/list 
+  // and make it data for section list
 	useEffect(() => {
 		const getAllTasks = async () => {
 			try {
@@ -20,25 +21,9 @@ const AgendaScreen = ({ navigation }) => {
 				querySnapshot.forEach((doc) => {
 					const {
 						title,
-						time,
-						listId,
-						boardId,
-						dueDate,
-						createdOn,
-						startDate,
 						agendaDueDate,
 					} = doc.data();
-					allTasks.push({
-						id: doc.id,
-						title,
-						time,
-						listId,
-						boardId,
-						dueDate,
-						createdOn,
-						startDate,
-						agendaDueDate,
-					});
+
           if (groupTasks[agendaDueDate]) {
             groupTasks[agendaDueDate].data.push(title);
           } else {
@@ -48,8 +33,6 @@ const AgendaScreen = ({ navigation }) => {
         for (const key in groupTasks) {
           sectionData.push(groupTasks[key]);
         }
-				setAllTasks(allTasks);
-				console.log("user tasks on this list", allTasks);
         console.log("section data", sectionData)
 				if (allTasks.length == 0) {
 					console.log("this tasks list is empty", allTasks.length);
