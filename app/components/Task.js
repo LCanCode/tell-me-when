@@ -23,11 +23,16 @@ import "firebase/compat/firestore";
 import ModalBox from "./ModalBox";
 import tw from "twrnc";
 import { SafeAreaView } from "react-native-safe-area-context";
+import DatePickerModal from "./DatePickerModal";
 
 const Task = ({ listId, boardId, agendaDate }) => {
 	const [listTasks, setListTasks] = useState([]);
-	const [task, setTask] = useState({ title: "", time: 0 });
+	const [task, setTask] = useState({
+		dueDate: new Date(),
+		startDate: new Date(),
+	});
 	const [modalVisible, setModalVisible] = useState(false);
+	const [date, setDate] = useState(new Date());
 	const auth = FIREBASE_AUTH;
 
 	// get all tasks associated with a listId
@@ -40,7 +45,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 
 				const listTasks = [];
 				querySnapshot.forEach((doc) => {
-					const { title, time, listId, boardId, dueDate, createdOn } =
+					const { title, time, listId, boardId, dueDate, createdOn, startDate} =
 						doc.data();
 					listTasks.push({
 						id: doc.id,
@@ -71,7 +76,8 @@ const Task = ({ listId, boardId, agendaDate }) => {
 			const listTasksCollection = collection(FIRESTORE_DB, "tasks");
 			const creationTimestamp = firebase.firestore.FieldValue.serverTimestamp();
 
-			const dateParts = task.dueDate.split("-");
+      const stringDate = task.dueDate.toLocaleDateString();
+			const dateParts = stringDate.split("-");
 			const year = parseInt(dateParts[2], 10);
 			let month = parseInt(dateParts[0], 10);
 			const day = parseInt(dateParts[1], 10);
@@ -133,52 +139,60 @@ const Task = ({ listId, boardId, agendaDate }) => {
 					<View
 						style={tw`border-2 border-white rounded-lg items  bg-gray-300 `}
 					>
-						<Button
-							style={tw`border-white border-2`}
-							title="add new task"
-							color="blue"
+						<Pressable
 							onPress={() => {
 								setModalVisible();
-							}}
-						/>
+							}}>
+              <Text style={tw`text-xs text-blue-900`}> Add New Task </Text>
+              </Pressable>
 					</View>
 					<View>
 						<ModalBox
 							isOpen={modalVisible}
 							closeModal={() => setModalVisible(false)}
-							title="Create New Board"
+							title="Add New Task"
 							description="Please enter task details."
 							content={
 								<>
 									<View style={tw`flex-column pb-5`}>
-                    <TextInput
-										placeholder="New Task Title"
-										onChangeText={(text) => setTask({ ...task, title: text })}
-										value={task.title}
-                    />
-                  </View>
-                  
-									<View style={tw`flex-column pb-5`}>
-                  <TextInput
-										placeholder="Estimate of how long this task will take "
-										onChangeText={(text) => setTask({ ...task, time: text })}
-										value={task.time}
-									/>
-                  </View>
+										<TextInput
+											placeholder="New Task Title"
+											onChangeText={(text) => setTask({ ...task, title: text })}
+											value={task.title}
+										/>
+									</View>
 
-                  <View style={tw`flex-column pb-5`}>
-									<TextInput
-										placeholder="When is this task due? mm-dd-yyyy format"
-										onChangeText={(text) => setTask({ ...task, dueDate: text })}
-										value={task.dueDate}
-									/>
-                  </View>
-                  
+									<View style={tw`flex-column pb-5`}>
+										<TextInput
+											placeholder="Estimate of how long this task will take "
+											onChangeText={(text) => setTask({ ...task, time: text })}
+											value={task.time}
+										/>
+									</View>
+
+									<View style={tw`flex-column pb-5`}>
+										<Text>When will you start? </Text>
+										<DatePickerModal
+											onDateSelected={(date) =>
+												setTask({ ...task, startDate: date })
+											}
+										/>
+									</View>
+									<View style={tw`flex-column pb-5`}>
+										<Text>When is this task due? </Text>
+										<DatePickerModal
+											onDateSelected={(date) =>
+												setTask({ ...task, dueDate: date })
+											}
+										/>
+									</View>
+
 									<Pressable
 										onPress={() => {
 											newTask();
 											setModalVisible(false);
 										}}
+										disabled={task.title === ""}
 									>
 										<Text> Add Task </Text>
 									</Pressable>
@@ -196,7 +210,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 									{item.title}
 								</Text>
 								<Text style={tw`text-black text-center text-xs`}>
-									due: {item.agendaDate}
+									due: {item.title}
 								</Text>
 								<View style={tw`container items-center `}>
 									<Pressable

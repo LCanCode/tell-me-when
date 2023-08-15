@@ -14,7 +14,7 @@ import { getDocs, addDoc, collection, query, where, deleteDoc, doc } from "fireb
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import tw from "twrnc";
 import ModalBox from "./ModalBox";
-import deleteList from "../screens/ListScreen";
+import DatePickerModal from "./DatePickerModal";
 
 const UsersBoards = ({ navigation }) => {
 	const [userBoards, setUserBoards] = useState([]);
@@ -156,6 +156,7 @@ const UsersBoards = ({ navigation }) => {
 						{" "}
 						ALL BOARDS{" "}
 					</Text>
+      
 
 					{/* button to create a new board */}
 					<View style={tw`border-2 border-white`}>

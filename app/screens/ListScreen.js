@@ -127,11 +127,15 @@ const ListScreen = ({ boardId }) => {
 						description="Please enter list details."
 						content={
 							<>
+              <View style={tw`flex-column pb-10`}>
 								<TextInput
 									placeholder="New List Title"
 									onChangeText={(text) => setList({ ...list, title: text })}
 									value={list.title}
 								/>
+                </View>
+
+                <View style={tw`flex-column py-10`}>
 								<TextInput
 									placeholder="New List Description"
 									onChangeText={(text) =>
@@ -139,13 +143,14 @@ const ListScreen = ({ boardId }) => {
 									}
 									value={list.description}
 								/>
+                </View>
 								<Pressable
 									onPress={() => {
 										addList();
 										setModalVisible(false);
 									}}
 								>
-									<Text> Add List </Text>
+									<Text style={tw`pt-5 text-center justify-center text-red-500`}> Add List </Text>
 								</Pressable>
 							</>
 						}
