@@ -45,8 +45,16 @@ const Task = ({ listId, boardId, agendaDate }) => {
 
 				const listTasks = [];
 				querySnapshot.forEach((doc) => {
-					const { title, time, listId, boardId, dueDate, createdOn, startDate} =
-						doc.data();
+					const {
+						title,
+						time,
+						listId,
+						boardId,
+						dueDate,
+						createdOn,
+						startDate,
+            agendaDueDate, 
+					} = doc.data();
 					listTasks.push({
 						id: doc.id,
 						title,
@@ -56,6 +64,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 						dueDate,
 						createdOn,
 						startDate,
+            agendaDueDate,
 					});
 				});
 				setListTasks(listTasks);
@@ -76,13 +85,11 @@ const Task = ({ listId, boardId, agendaDate }) => {
 			const listTasksCollection = collection(FIRESTORE_DB, "tasks");
 			const creationTimestamp = firebase.firestore.FieldValue.serverTimestamp();
 
-      const stringDate = task.dueDate.toLocaleDateString();
-			const dateParts = stringDate.split("-");
-			const year = parseInt(dateParts[2], 10);
-			let month = parseInt(dateParts[0], 10);
-			const day = parseInt(dateParts[1], 10);
-
-			month < 10 ? (month = "0" + month) : month;
+			const timestampDue = new Date(task.dueDate);
+			// const dateParts = stringDate.split("-");
+			const year = timestampDue.getFullYear();
+			let month = String(timestampDue.getMonth() + 1).padStart(2, "0");
+			const day = String(timestampDue.getDate()).padStart(2, "0");
 			const agendaDate = year + "-" + month + "-" + day;
 
 			await addDoc(listTasksCollection, {
@@ -142,9 +149,10 @@ const Task = ({ listId, boardId, agendaDate }) => {
 						<Pressable
 							onPress={() => {
 								setModalVisible();
-							}}>
-              <Text style={tw`text-xs text-blue-900`}> Add New Task </Text>
-              </Pressable>
+							}}
+						>
+							<Text style={tw`text-xs text-blue-900`}> Add New Task </Text>
+						</Pressable>
 					</View>
 					<View>
 						<ModalBox
@@ -201,16 +209,16 @@ const Task = ({ listId, boardId, agendaDate }) => {
 						/>
 					</View>
 				</View>
-				<View style={tw`p-2`}>
+				<View style={tw`p-2 `}>
 					<FlatList
 						data={listTasks}
 						renderItem={({ item }) => (
 							<View style={tw`bg-white rounded shadow p-3 mb-2`}>
 								<Text style={tw`text-black text-center text-md`}>
-									{item.title}
+									{item.title} 
 								</Text>
 								<Text style={tw`text-black text-center text-xs`}>
-									due: {item.title}
+									{item.agendaDueDate}
 								</Text>
 								<View style={tw`container items-center `}>
 									<Pressable
