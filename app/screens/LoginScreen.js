@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
 import SignUp from "../components/SignUp";
 import SignIn from "../components/SignIn";
-import GoogleSignIn from "../components/GoogleSignIn";
 
 const LoginScreen = ({ navigation }) => {
 	return (
@@ -23,9 +22,6 @@ const LoginScreen = ({ navigation }) => {
       <Text style={tw`text-lg text-white justify-center`}> Create an Account </Text>
       </Pressable>
 
-			{/* <View>
-				<GoogleSignIn navigation={navigation} />
-			</View> */}
 		</View>
 	);
 };

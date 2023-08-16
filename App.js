@@ -9,14 +9,19 @@ import CalendarRN from "./app/screens/CalendarRN";
 import ListScreen from "./app/screens/ListScreen";
 import SignUp from "./app/components/SignUp";
 import AgendaScreen from "./app/screens/AgendaScreen";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import tw from "twrnc";
+import * as Notifications from "expo-notifications";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
 	const [authenticated, setAuthenticated] = useState(false);
+  
+  useEffect(() => {
+    Notifications.requestPermissionsAsync();
+  }, [])
 
 	return (
 		<SafeAreaView style={tw`flex-1`}>
