@@ -60,7 +60,7 @@ const UsersBoards = ({ navigation }) => {
 		getUserBoards();
 	}, []);
 
-	//to delete a board and associate lists and tasks
+	//to delete a board and associated lists and tasks
 	const deleteBoard = async (boardId) => {
 		try {
 			const listCollection = collection(FIRESTORE_DB, "list");
@@ -105,15 +105,31 @@ const UsersBoards = ({ navigation }) => {
 				"boards",
 				boardId
 			);
-			await setDoc(boardToUpdate, {
-				title: board.title,
-				description: board.description,
-			});
-			setUserBoards(() => [
-				...userBoards,
-				{ id: boardId, title: board.title, description: board.description },
-			]);
+			await setDoc(
+				boardToUpdate,
+				{
+					title: board.title,
+					description: board.description,
+				},
+				{ merge: true }
+			);
+
+			const updatedBoardIndex = userBoards.indexOf(
+				(board) => board.id === boardId
+			);
+			if (updatedBoardIndex !== -1) {
+				const updatedBoards = [...userBoards];
+				updatedBoards[updatedBoardIndex] = {
+					...updatedBoards[updatedBoardIndex],
+					title: board.title,
+					description: board.description,
+				};
+				setUserBoards(updatedBoards);
+			}
+
 			setBoard({ title: "", description: "" });
+			setModalVisible(false);
+			setIsUpdatingBoard(false);
 			console.log("Board updated", id, title, description);
 		} catch (error) {
 			console.log("Error updating board:", error);
@@ -161,7 +177,7 @@ const UsersBoards = ({ navigation }) => {
 					<View>
 						<Pressable
 							onPress={() => {
-								setIsUpdatingBoard(item.id);
+								setIsUpdatingBoard(isUpdatingBoard ? false : item.id);
 								setModalVisible(true);
 							}}
 						>
@@ -210,7 +226,10 @@ const UsersBoards = ({ navigation }) => {
 								setModalVisible();
 							}}
 						>
-							<Text style={tw`text-lg text-center text-white`}> Add New Board </Text>
+							<Text style={tw`text-lg text-center text-white`}>
+								{" "}
+								Add New Board{" "}
+							</Text>
 						</Pressable>
 						{/* <Button
 							style={tw`border-white border-2`}

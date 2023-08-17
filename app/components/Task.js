@@ -18,6 +18,7 @@ import {
 	Timestamp,
 	deleteDoc,
 	doc,
+	setDoc,
 } from "firebase/firestore";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
@@ -34,6 +35,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 	});
 	const [modalVisible, setModalVisible] = useState(false);
 	const [date, setDate] = useState(new Date());
+	const [isUpdatingTask, setIsUpdatingTask] = useState(false);
 	const auth = FIREBASE_AUTH;
 
 	// get all tasks associated with a listId
@@ -128,6 +130,63 @@ const Task = ({ listId, boardId, agendaDate }) => {
 		}
 	};
 
+	//to update Task info
+
+	const updateTask = async (taskId) => {
+		try {
+			const creationTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+			const timestampDue = new Date(task.dueDate);
+			const year = timestampDue.getFullYear();
+			let month = String(timestampDue.getMonth() + 1).padStart(2, "0");
+			const day = String(timestampDue.getDate()).padStart(2, "0");
+			const agendaDate = year + "-" + month + "-" + day;
+			const tasktoUpdate = doc(FIRESTORE_DB, "tasks", taskId);
+			await setDoc(
+				tasktoUpdate,
+				{
+					title: task.title,
+					time: task.time,
+					listId: listId,
+					boardId: boardId,
+					dueDate: task.dueDate,
+					agendaDueDate: agendaDate,
+					createdOn: creationTimestamp,
+					startDate: task.startDate,
+				},
+				{ merge: true }
+			);
+			const updatedTaskIndex = listTasks.findIndex(
+				(task) => task.id === taskId
+			);
+			if (updatedTaskIndex !== -1) {
+				const updatedTasks = [...listTasks];
+				updatedTasks[updatedTaskIndex] = {
+					...updatedTasks[updatedTaskIndex],
+					title: task.title,
+					time: task.time,
+					listId: listId,
+					boardId: boardId,
+					dueDate: task.dueDate,
+					agendaDueDate: agendaDate,
+					createdOn: creationTimestamp,
+					startDate: task.startDate,
+				};
+				setListTasks(updatedTasks);
+			}
+			setTask({
+				title: "",
+				time: "",
+				dueDate: new Date(),
+				startDate: new Date(),
+			});
+      setModalVisible(false);
+			console.log("task", taskId, "with list id", listId, "created");
+			console.log("listTask:", listTasks);
+		} catch (error) {
+			console.log("error updating task", error);
+		}
+	};
+
 	// to delete a task
 	const deleteTask = async (taskId) => {
 		try {
@@ -162,9 +221,16 @@ const Task = ({ listId, boardId, agendaDate }) => {
 					<View>
 						<ModalBox
 							isOpen={modalVisible}
-							closeModal={() => setModalVisible(false)}
-							title="Add New Task"
-							description="Please enter task details."
+							closeModal={() => {
+								setModalVisible(false);
+								setIsUpdatingTask(false);
+							}}
+							title={isUpdatingTask ? "Update Task" : "Add New Task"}
+							description={
+								isUpdatingTask
+									? "Please update all fields"
+									: "Please enter task details."
+							}
 							content={
 								<>
 									<View style={tw`flex-column pb-5`}>
@@ -202,12 +268,16 @@ const Task = ({ listId, boardId, agendaDate }) => {
 
 									<Pressable
 										onPress={() => {
-											newTask();
+											if (isUpdatingTask) {
+												updateTask(isUpdatingTask);
+											} else {
+												newTask();
+											}
 											setModalVisible(false);
 										}}
 										disabled={task.title === ""}
 									>
-										<Text> Add Task </Text>
+										<Text> {isUpdatingTask ? "Update Task" : "Add Task"} </Text>
 									</Pressable>
 								</>
 							}
@@ -219,7 +289,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 						data={listTasks}
 						renderItem={({ item }) => (
 							<View style={tw`bg-white rounded shadow p-3 mb-2`}>
-								<Text style={tw`text-black text-center text-md`}>
+								<Text style={tw`text-black text-center text-sm`}>
 									{item.title}
 								</Text>
 								<Text style={tw`text-black text-center text-xs`}>
@@ -235,6 +305,17 @@ const Task = ({ listId, boardId, agendaDate }) => {
 										<Text style={tw`text-xs text-blue-900 p-2`}>
 											{" "}
 											Delete Task
+										</Text>
+									</Pressable>
+									<Pressable
+										onPress={() => {
+											setIsUpdatingTask(item.id);
+											setModalVisible(true);
+										}}
+									>
+										<Text style={tw`text-xs text-blue-900 h-20`}>
+											{" "}
+											Update Task{" "}
 										</Text>
 									</Pressable>
 								</View>

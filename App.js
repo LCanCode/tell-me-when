@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import tw from "twrnc";
 import * as Notifications from "expo-notifications";
+import { useDimensions, useDeviceOrientation } from '@react-native-community/hooks';
 
 const Stack = createNativeStackNavigator();
 

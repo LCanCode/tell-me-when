@@ -5,7 +5,7 @@ import {
 	FlatList,
 	Pressable,
 	SafeAreaView,
-  KeyboardAvoidingView
+	KeyboardAvoidingView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
@@ -17,6 +17,7 @@ import {
 	getDocs,
 	deleteDoc,
 	doc,
+	setDoc,
 } from "firebase/firestore";
 import Task from "../components/Task";
 import ModalBox from "../components/ModalBox";
@@ -26,6 +27,7 @@ const ListScreen = ({ boardId }) => {
 	const [list, setList] = useState({ title: "", description: "" });
 	const [usersLists, setUsersLists] = useState([]);
 	const [modalVisible, setModalVisible] = useState(false);
+	const [isUpdatingList, setIsUpdatingList] = useState(false);
 	const auth = FIREBASE_AUTH;
 
 	// get all list associated with a boardId
@@ -55,7 +57,7 @@ const ListScreen = ({ boardId }) => {
 	}, []);
 
 	// create a new list associated with a boardId
-	const addList = async () => {
+	const newList = async () => {
 		try {
 			const userId = auth.currentUser.uid;
 			const userListCollection = collection(FIRESTORE_DB, "list");
@@ -78,6 +80,42 @@ const ListScreen = ({ boardId }) => {
 			console.log("list created with board id", boardId);
 		} catch (error) {
 			console.log("error creating list", error);
+		}
+	};
+
+	//updat a list title and description
+	const updateList = async (listId) => {
+		try {
+			const userId = auth.currentUser.uid;
+			const listToUpdate = doc(FIRESTORE_DB, "list", listId);
+			await setDoc(
+				listToUpdate,
+				{
+					title: list.title,
+					description: list.description,
+					boardId: boardId,
+					userId: userId,
+				},
+				{ merge: true }
+			);
+			const updatedListIndex = usersLists.findIndex(
+				(list) => list.id === listId
+			);
+			if (updatedListIndex !== -1) {
+				const updatedLists = [...usersLists];
+				updatedLists[updatedListIndex] = {
+					...updatedLists[updatedListIndex],
+					title: list.title,
+					description: list.description,
+				};
+				setUsersLists(updatedLists);
+			}
+			setList({ title: "", description: "" });
+			setModalVisible(false);
+
+			console.log("list", listId, "updated with board id", boardId);
+		} catch (error) {
+			console.log("error updating list", error);
 		}
 	};
 
@@ -123,35 +161,47 @@ const ListScreen = ({ boardId }) => {
 				<View>
 					<ModalBox
 						isOpen={modalVisible}
-						closeModal={() => setModalVisible(false)}
-						title="Create New List"
-						description="Please enter list details."
+						closeModal={() => {
+							setModalVisible(false);
+							setIsUpdatingList(false);
+						}}
+						title={isUpdatingList ? "Update List" : "Create New List"}
+						description={
+							isUpdatingList
+								? "Please update all fields"
+								: "Please enter list details."
+						}
 						content={
 							<>
-              <View style={tw`flex-column pb-10`}>
-								<TextInput
-									placeholder="New List Title"
-									onChangeText={(text) => setList({ ...list, title: text })}
-									value={list.title}
-								/>
-                </View>
+								<View style={tw`flex-column pb-10`}>
+									<TextInput
+										placeholder="New List Title"
+										onChangeText={(text) => setList({ ...list, title: text })}
+										value={list.title}
+									/>
+								</View>
 
-                <View style={tw`flex-column py-10`}>
-								<TextInput
-									placeholder="New List Description"
-									onChangeText={(text) =>
-										setList({ ...list, description: text })
-									}
-									value={list.description}
-								/>
-                </View>
+								<View style={tw`flex-column py-10`}>
+									<TextInput
+										placeholder="New List Description"
+										onChangeText={(text) =>
+											setList({ ...list, description: text })
+										}
+										value={list.description}
+									/>
+								</View>
 								<Pressable
 									onPress={() => {
-										addList();
+										if (isUpdatingList) {
+											updateList(isUpdatingList);
+										} else {
+											newList();
+										}
 										setModalVisible(false);
 									}}
+									disabled={list.title === ""}
 								>
-									<Text style={tw`pt-5 text-center justify-center text-red-500`}> Add List </Text>
+									<Text> {isUpdatingList ? "Update List" : "Add List"} </Text>
 								</Pressable>
 							</>
 						}
@@ -166,15 +216,17 @@ const ListScreen = ({ boardId }) => {
 							renderItem={({ item }) => (
 								<View style={tw`p-1`}>
 									<View style={tw`h-120 border-white items-center m-1`}>
-                    <View >
-										<View style={tw`bg-gray-200 w-72 h-10 p-2 rounded shadow flex-wrap`}>
-											<Text style={tw`text-black text-left text-xs`}>
-											{item.title}
-											</Text>
-											{/* <Text style={tw`text-black text-center text-xs`}>
+										<View>
+											<View
+												style={tw`bg-gray-200 w-72 h-10 p-2 rounded shadow flex-wrap`}
+											>
+												<Text style={tw`text-black text-left text-xs`}>
+													{item.title}
+												</Text>
+												{/* <Text style={tw`text-black text-center text-xs`}>
 												List Id = {item.id}
 											</Text> */}
-											
+
 												<Pressable
 													style={tw`p-1 border-2 border-white rounded-lg  
                           w-20 bg-gray-200 h-10 justify-between items-center`}
@@ -187,7 +239,17 @@ const ListScreen = ({ boardId }) => {
 														Delete List
 													</Text>
 												</Pressable>
-											
+												<Pressable
+													onPress={() => {
+														setIsUpdatingList(item.id);
+														setModalVisible(true);
+													}}
+												>
+													<Text style={tw`text-xs text-blue-900 h-20`}>
+														{" "}
+														Update List{" "}
+													</Text>
+												</Pressable>
 											</View>
 
 											<View style={tw``}>
