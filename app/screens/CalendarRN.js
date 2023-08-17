@@ -1,5 +1,5 @@
 import { View, Text, FlatList } from "react-native";
-import { Calendar, Agenda, CalendarProvider, AgendaList } from "react-native-calendars";
+import { Calendar, Agenda, CalendarProvider, AgendaList, CalendarList } from "react-native-calendars";
 import React, { useState, useEffect } from "react";
 import { addDoc, collection, where, query, getDocs } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
@@ -68,11 +68,11 @@ const CalendarRN = () => {
 			</View>
 		</View> */}
 
-		{/* <Calendar />  */}
+		<CalendarList /> 
     {/* <CalendarProvider> */}
       {/* <AgendaList /> */}
     {/* </CalendarProvider> */}
-		<Text> AGENDA </Text>
+		{/* <Text> AGENDA </Text>
     <View style={{ height: 600 }}>
 				<Agenda
 					items={ tasks }
@@ -82,7 +82,7 @@ const CalendarRN = () => {
 						</View>
 					)}
 				/>
-			</View>
+			</View> */}
 		</View>
 		</View>
 	);

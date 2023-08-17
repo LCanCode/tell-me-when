@@ -10,7 +10,16 @@ import {
 	SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getDocs, addDoc, collection, query, where, deleteDoc, doc } from "firebase/firestore";
+import {
+	getDocs,
+	addDoc,
+	collection,
+	query,
+	where,
+	deleteDoc,
+	setDoc,
+	doc,
+} from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import tw from "twrnc";
 import ModalBox from "./ModalBox";
@@ -20,6 +29,7 @@ const UsersBoards = ({ navigation }) => {
 	const [userBoards, setUserBoards] = useState([]);
 	const [board, setBoard] = useState({ title: "", description: "" });
 	const [modalVisible, setModalVisible] = useState(false);
+	const [isUpdatingBoard, setIsUpdatingBoard] = useState(false);
 	const auth = FIREBASE_AUTH;
 
 	// to get all boards associated with a userID
@@ -84,6 +94,32 @@ const UsersBoards = ({ navigation }) => {
 		}
 	};
 
+	// to update board name or description
+	const updateBoard = async (boardId) => {
+		try {
+			const userId = auth.currentUser.uid;
+			const boardToUpdate = doc(
+				FIRESTORE_DB,
+				"users",
+				userId,
+				"boards",
+				boardId
+			);
+			await setDoc(boardToUpdate, {
+				title: board.title,
+				description: board.description,
+			});
+			setUserBoards(() => [
+				...userBoards,
+				{ id: boardId, title: board.title, description: board.description },
+			]);
+			setBoard({ title: "", description: "" });
+			console.log("Board updated", id, title, description);
+		} catch (error) {
+			console.log("Error updating board:", error);
+		}
+	};
+
 	// to create a new board associated with a userID
 	const newBoard = async () => {
 		try {
@@ -121,25 +157,36 @@ const UsersBoards = ({ navigation }) => {
 		};
 		return (
 			<Pressable onPress={handlePress}>
-				<View style={tw`pt-5`}>
-					<View
-						style={tw`w-full text-center flex items-stretch flex-column gap-1 border-double border-white border-2`}
-					>
-						<Text style={tw`p-1 flex-1 text-white text-lg text-center`}>
-							{" "}
-							{item.title}
-						</Text>
-						<Text style={tw`p-2 flex-2 text-white text-xs text-center italic`}>
-							{" "}
-							description: {item.description}
-						</Text>
+				<View style={tw`bg-slate-500`}>
+					<View>
 						<Pressable
+							onPress={() => {
+								setIsUpdatingBoard(item.id);
+								setModalVisible(true);
+							}}
+						>
+							<Text style={tw`text-xs text-blue-900 h-20`}> Update Board </Text>
+						</Pressable>
+						<Pressable
+							style={tw``}
 							onPress={() => {
 								deleteBoard(item.id);
 							}}
 						>
-							<Text style={tw`text-xs text-blue-900 pt-1`}> Delete Board </Text>
+							<Text style={tw`text-xs text-blue-900 h-20 `}>
+								{" "}
+								Delete Board{" "}
+							</Text>
 						</Pressable>
+
+						<Text style={tw`text-white text-lg text-center`}>
+							{" "}
+							{item.title}
+						</Text>
+						<Text style={tw`text-white text-xs text-center italic`}>
+							{" "}
+							{item.description}
+						</Text>
 					</View>
 				</View>
 			</Pressable>
@@ -149,31 +196,43 @@ const UsersBoards = ({ navigation }) => {
 	return (
 		<View style={tw`flex-1  bg-black`}>
 			<SafeAreaView>
-				<View
-					style={tw`text-center flex items-center flex-column gap-1 opacity-70`}
-				>
+				<View style={tw`text-center items-center  opacity-70`}>
 					<Text style={tw`text-white text-2xl text-center pt-4 underline`}>
 						{" "}
 						ALL BOARDS{" "}
 					</Text>
-      
 
 					{/* button to create a new board */}
-					<View style={tw`border-2 border-white`}>
-						<Button
+					<View style={tw`border-2 border-white `}>
+						<Pressable
+							style={tw`border-white border-2 `}
+							onPress={() => {
+								setModalVisible();
+							}}
+						>
+							<Text style={tw`text-lg text-center text-white`}> Add New Board </Text>
+						</Pressable>
+						{/* <Button
 							style={tw`border-white border-2`}
 							title="add new board"
 							color="blue"
 							onPress={() => {
 								setModalVisible();
 							}}
-						/>
+						/> */}
 					</View>
 					<ModalBox
 						isOpen={modalVisible}
-						closeModal={() => setModalVisible(false)}
-						title="Create New Board"
-						description="Please enter board details."
+						closeModal={() => {
+							setModalVisible(false);
+							setIsUpdatingBoard(false);
+						}}
+						title={isUpdatingBoard ? "Upate Board" : "Create New Board"}
+						description={
+							isUpdatingBoard
+								? "Please update Board details"
+								: "Please enter board details."
+						}
 						content={
 							<>
 								<TextInput
@@ -190,11 +249,15 @@ const UsersBoards = ({ navigation }) => {
 								/>
 								<Pressable
 									onPress={() => {
-										newBoard();
+										if (isUpdatingBoard) {
+											updateBoard(isUpdatingBoard);
+										} else {
+											newBoard();
+										}
 										setModalVisible(false);
 									}}
 								>
-									<Text>Add Board</Text>
+									<Text>{isUpdatingBoard ? "Update Board" : "Add Board"}</Text>
 								</Pressable>
 							</>
 						}
