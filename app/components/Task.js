@@ -26,6 +26,7 @@ import ModalBox from "./ModalBox";
 import tw from "twrnc";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DatePickerModal from "./DatePickerModal";
+import { FontAwesome } from "@expo/vector-icons";
 
 const Task = ({ listId, boardId, agendaDate }) => {
 	const [listTasks, setListTasks] = useState([]);
@@ -179,7 +180,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 				dueDate: new Date(),
 				startDate: new Date(),
 			});
-      setModalVisible(false);
+			setModalVisible(false);
 			console.log("task", taskId, "with list id", listId, "created");
 			console.log("listTask:", listTasks);
 		} catch (error) {
@@ -205,17 +206,27 @@ const Task = ({ listId, boardId, agendaDate }) => {
 			<KeyboardAvoidingView>
 				{/* button to create a new tasks */}
 				<View
-					style={tw`text-center flex-row items-center justify-center flex-column gap-1 opacity-70 pb-3`}
+					style={tw`text-center flex-row items-center justify-center flex-column gap-1  pb-3`}
 				>
 					<View
-						style={tw`border-2 border-white rounded-lg items  bg-gray-300 `}
+						style={tw`border-2 border-cyan-700 rounded-lg items  bg-orange-200 `}
 					>
 						<Pressable
 							onPress={() => {
 								setModalVisible();
 							}}
+							style={tw`flex-row justify-center items-center h-8 w-35`}
 						>
-							<Text style={tw`text-xs text-blue-900`}> Add New Task </Text>
+							<Text style={tw`text-xs font-bold text-cyan-700`}>
+								{" "}
+								New Task{" "}
+							</Text>
+							<FontAwesome
+								name="plus-square"
+								size={30}
+								color="white"
+								onPress={() => setModalVisible()}
+							/>
 						</Pressable>
 					</View>
 					<View>
@@ -236,6 +247,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 									<View style={tw`flex-column pb-5`}>
 										<TextInput
 											placeholder="New Task Title"
+											style={tw`font-black`}
 											onChangeText={(text) => setTask({ ...task, title: text })}
 											value={task.title}
 										/>
@@ -244,13 +256,14 @@ const Task = ({ listId, boardId, agendaDate }) => {
 									<View style={tw`flex-column pb-5`}>
 										<TextInput
 											placeholder="Estimate of how long this task will take "
+											style={tw`font-black`}
 											onChangeText={(text) => setTask({ ...task, time: text })}
 											value={task.time}
 										/>
 									</View>
 
 									<View style={tw`flex-column pb-5`}>
-										<Text>When will you start? </Text>
+										<Text style={tw`font-black`}>When will you start? </Text>
 										<DatePickerModal
 											onDateSelected={(date) =>
 												setTask({ ...task, startDate: date })
@@ -258,7 +271,7 @@ const Task = ({ listId, boardId, agendaDate }) => {
 										/>
 									</View>
 									<View style={tw`flex-column pb-5`}>
-										<Text>When is this task due? </Text>
+										<Text style={tw`font-black`}>When is this task due? </Text>
 										<DatePickerModal
 											onDateSelected={(date) =>
 												setTask({ ...task, dueDate: date })
@@ -284,41 +297,47 @@ const Task = ({ listId, boardId, agendaDate }) => {
 						/>
 					</View>
 				</View>
-				<View style={tw`p-2 `}>
+				<View style={tw`p-2 items-center`}>
 					<FlatList
 						data={listTasks}
 						renderItem={({ item }) => (
-							<View style={tw`bg-white rounded shadow p-3 mb-2`}>
-								<Text style={tw`text-black text-center text-sm`}>
-									{item.title}
-								</Text>
-								<Text style={tw`text-black text-center text-xs`}>
-									{item.agendaDueDate}
-								</Text>
-								<View style={tw`container items-center `}>
-									<Pressable
-										style={tw`p-1 border-2 border-white rounded-lg  w-1/2 bg-gray-200 h-10 justify-between items-center`}
-										onPress={() => {
-											deleteTask(item.id);
-										}}
+							<View
+								style={tw`bg-orange-200 m-2 border-2 
+                border-cyan-700 rounded-lg w-60 `}
+							>
+								<View style={tw`flex-col items-center justify-center p-1`}>
+									<Text
+										style={tw`text-cyan-700 text-center text-xl 
+                    self-center justify-center`}
 									>
-										<Text style={tw`text-xs text-blue-900 p-2`}>
-											{" "}
-											Delete Task
-										</Text>
-									</Pressable>
+										{item.title}
+									</Text>
+									<Text style={tw`text-cyan-700 text-center
+                  text-xs`}>
+										due: {item.agendaDueDate}
+									</Text>
+								</View>
+
+								<View style={tw`flex-row justify-between p-3`}>
+									
 									<Pressable
 										onPress={() => {
 											setIsUpdatingTask(item.id);
 											setModalVisible(true);
 										}}
 									>
-										<Text style={tw`text-xs text-blue-900 h-20`}>
-											{" "}
-											Update Task{" "}
-										</Text>
+										<FontAwesome name="edit" size={24} color="white" />
+									</Pressable>
+									<Pressable
+										style={tw``}
+										onPress={() => {
+                      deleteTask(item.id);
+										}}
+									>
+                  <FontAwesome name="trash-o" size={24} color="white" />
 									</Pressable>
 								</View>
+
 							</View>
 						)}
 					/>

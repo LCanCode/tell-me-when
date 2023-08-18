@@ -63,13 +63,13 @@ const SignIn = ({ navigation }) => {
 					secureTextEntry={true}
 				/>
 			<Pressable
-        style={tw`h-12 border-2 border-white rounded-md flex flex-row justify-center items-center px-6 my-4.5`}
+        style={tw`h-12 border-2 border-cyan-700 rounded-md flex flex-row justify-center items-center px-6 my-4.5`}
 				onPress={() => {
           handleSignIn();
 				}}
 			>
         <View style={tw`flex-2 flex items-center`}> 
-        <Text style={tw`text-white text-base font-medium`}> Sign In </Text>
+        <Text style={tw`text-cyan-700 text-base font-medium`}> Sign In </Text>
         </View>
 			</Pressable>
       </KeyboardAvoidingView>

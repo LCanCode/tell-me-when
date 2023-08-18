@@ -6,6 +6,7 @@ import {
 	Pressable,
 	SafeAreaView,
 	KeyboardAvoidingView,
+	ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
@@ -22,6 +23,7 @@ import {
 import Task from "../components/Task";
 import ModalBox from "../components/ModalBox";
 import tw from "twrnc";
+import { FontAwesome } from "@expo/vector-icons";
 
 const ListScreen = ({ boardId }) => {
 	const [list, setList] = useState({ title: "", description: "" });
@@ -143,20 +145,25 @@ const ListScreen = ({ boardId }) => {
 		<View>
 			<KeyboardAvoidingView>
 				{/* button to create a new list */}
-				<View
-					style={tw`text-center flex-wrap items-center flex-column gap-1 opacity-70 ml-4`}
-				>
-					<View
-						style={tw`border-2 bg-white p-1 rounded-3xl h-10 flex-row justify-between items-center`}
+				<View style={tw`p-1 m-1 h-10 items-end justify-end`}>
+					<Pressable
+						onPress={() => {
+							setModalVisible();
+						}}
+						style={tw`flex-row justify-center items-center w-35 h-10 border-2 border-cyan-700 rounded-lg bg-orange-200`}
 					>
-						<Pressable
-							onPress={() => {
-								setModalVisible();
-							}}
-						>
-							<Text style={tw`text-xs text-blue-900`}> Add New List</Text>
-						</Pressable>
-					</View>
+						<FontAwesome
+							name="plus-square"
+							size={30}
+							color="white"
+							onPress={() => setModalVisible()}
+						/>
+
+						<Text style={tw`text-cyan-700 font-bold tracking-wider text-base`}>
+							{" "}
+							New List
+						</Text>
+					</Pressable>
 				</View>
 				<View>
 					<ModalBox
@@ -176,6 +183,7 @@ const ListScreen = ({ boardId }) => {
 								<View style={tw`flex-column pb-10`}>
 									<TextInput
 										placeholder="New List Title"
+										style={tw`font-black`}
 										onChangeText={(text) => setList({ ...list, title: text })}
 										value={list.title}
 									/>
@@ -184,6 +192,7 @@ const ListScreen = ({ boardId }) => {
 								<View style={tw`flex-column py-10`}>
 									<TextInput
 										placeholder="New List Description"
+										style={tw`font-black`}
 										onChangeText={(text) =>
 											setList({ ...list, description: text })
 										}
@@ -201,71 +210,68 @@ const ListScreen = ({ boardId }) => {
 									}}
 									disabled={list.title === ""}
 								>
-									<Text> {isUpdatingList ? "Update List" : "Add List"} </Text>
+									<Text style={tw`mt-6`}>
+										{" "}
+										{isUpdatingList ? "Update List" : "Add List"}{" "}
+									</Text>
 								</Pressable>
 							</>
 						}
 					/>
 				</View>
 				{/* render all list  */}
-				<View style={tw`items-start my-1 flex-1`}>
-					<View style={tw`w-96 items-center justify-center m-1 h-135`}>
+				<ScrollView style={tw`flex `}>
+					<View style={tw`w-100 h-140 `}>
 						<FlatList
 							horizontal={true}
 							data={usersLists}
 							renderItem={({ item }) => (
-								<View style={tw`p-1`}>
-									<View style={tw`h-120 border-white items-center m-1`}>
+								<View style={tw``}>
+									<View style={tw` `}>
+
 										<View>
-											<View
-												style={tw`bg-gray-200 w-72 h-10 p-2 rounded shadow flex-wrap`}
-											>
-												<Text style={tw`text-black text-left text-xs`}>
+											<View style={tw` w-72 h-10 p-1 m-3 w-70 rounded shadow bg-orange-200 flex-row justify-around border-2 border-cyan-700`}>
+												<Text style={tw`text-cyan-700 font-extrabold tracking-wider text-left text-lg pl-2`}>
 													{item.title}
 												</Text>
-												{/* <Text style={tw`text-black text-center text-xs`}>
-												List Id = {item.id}
-											</Text> */}
 
-												<Pressable
-													style={tw`p-1 border-2 border-white rounded-lg  
-                          w-20 bg-gray-200 h-10 justify-between items-center`}
-													onPress={() => {
-														deleteList(item.id);
-													}}
-												>
-													<Text style={tw`text-xs text-blue-900 pt-1`}>
-														{" "}
-														Delete List
-													</Text>
-												</Pressable>
 												<Pressable
 													onPress={() => {
 														setIsUpdatingList(item.id);
 														setModalVisible(true);
 													}}
 												>
-													<Text style={tw`text-xs text-blue-900 h-20`}>
-														{" "}
-														Update List{" "}
-													</Text>
+													<FontAwesome name="edit" size={24} color="white" />
 												</Pressable>
+
+												<Pressable
+													style={tw``}
+													onPress={() => {
+														deleteList(item.id);
+													}}
+												>
+                          <FontAwesome name="trash-o" size={24} color="white" />
+												</Pressable>
+
 											</View>
 
-											<View style={tw``}>
-												<Task
-													listId={item.id}
-													boardId={item.boardId}
-													agendaDate={item.agendaDate}
-												/>
-											</View>
+
+											<ScrollView>
+												<View style={tw``}>
+													<Task
+														listId={item.id}
+														boardId={item.boardId}
+														agendaDate={item.agendaDate}
+													/>
+												</View>
+											</ScrollView>
 										</View>
 									</View>
 								</View>
 							)}
 						/>
 					</View>
-				</View>
+				</ScrollView>
 			</KeyboardAvoidingView>
 		</View>
 	);

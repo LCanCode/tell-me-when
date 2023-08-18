@@ -7,21 +7,25 @@ import SignIn from "../components/SignIn";
 
 const LoginScreen = ({ navigation }) => {
 	return (
-		<View style={tw`flex-1 items-center justify-start bg-black`}>
-
-			<View style={tw`p-8 w-full max-w-xs`}>
-				<Text style={tw`text-3xl font-bold mb-6 text-white`}>Login</Text>
-				<SignIn navigation={navigation} />
+		<View style={tw`flex-1 bg-cyan-300 opacity-90`}>
+			<View style={tw`flex-9 justify-center`}>
+				<Text style={tw`self-center text-2xl text-cyan-700 font-black p-3 `}>Login</Text>
+				<View style={tw` self-center w-70` }>
+					<SignIn navigation={navigation} />
+				</View>
 			</View>
-      <Pressable
-        style={tw`h-12 border-2 border-white rounded-md flex flex-row justify-center items-center px-6 my-4.5`}
-				onPress={() => {
-          navigation.navigate("Sign Up");
-				}}
-			>
-      <Text style={tw`text-lg text-white justify-center`}> Create an Account </Text>
-      </Pressable>
 
+			<View style={tw`flex-5 flex-shrink align-center`}>
+				<Pressable
+					style={tw`self-center`}
+					onPress={() => {
+						navigation.navigate("Sign Up");
+					}}
+				>
+					<Text style={tw`self-center text-cyan-700 font-lg`}> or </Text>
+					<Text style={tw`self-center text-cyan-700 font-black`}> Create an Account </Text>
+				</Pressable>
+			</View>
 		</View>
 	);
 };

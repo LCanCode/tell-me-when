@@ -9,10 +9,11 @@ const BoardScreen = ({ navigation }) => {
 	const { boardId, title, description } = route.params;
 
 	return (
-		<View style={tw`container h-full mx auto bg-black`}>
-			<View style={tw`flex mr-8 mt-2`}>
-				<Text style={tw`text-xl text-left pt-5 flex font-bold text-white`}>Board Title: {title}</Text>
-				<Text style={tw`text-sm text-left  flex font-bold mb-6 text-white`}>Board Description: {description}</Text>
+		<View style={tw`flex-1 bg-cyan-300 opacity-90 w-100`}>
+			<View style={tw``}>
+				<Text style={tw`text-cyan-700 text-2xl
+            font-extrabold tracking-widest mb-1 text-center`}>{title}</Text>
+				<Text style={tw`text-sm text-left  flex font-bold mb-6 text-cyan-700 text-center`}>Board Description: {description}</Text>
 			</View>
 
 			<View>

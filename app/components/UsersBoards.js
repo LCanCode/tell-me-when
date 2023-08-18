@@ -24,6 +24,7 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import tw from "twrnc";
 import ModalBox from "./ModalBox";
 import DatePickerModal from "./DatePickerModal";
+import { FontAwesome } from "@expo/vector-icons";
 
 const UsersBoards = ({ navigation }) => {
 	const [userBoards, setUserBoards] = useState([]);
@@ -130,7 +131,7 @@ const UsersBoards = ({ navigation }) => {
 			setBoard({ title: "", description: "" });
 			setModalVisible(false);
 			setIsUpdatingBoard(false);
-			console.log("Board updated", id, title, description);
+			// console.log("Board updated", id, title, description);
 		} catch (error) {
 			console.log("Error updating board:", error);
 		}
@@ -173,29 +174,22 @@ const UsersBoards = ({ navigation }) => {
 		};
 		return (
 			<Pressable onPress={handlePress}>
-				<View style={tw`bg-slate-500`}>
-					<View>
+				<View
+					style={tw`bg-orange-200 border-2 h-30 border-cyan-700 rounded-lg flex-row p-5 items-baseline justify-center p-6`}
+				>
+					<View style={tw`flex-shrink `}>
 						<Pressable
 							onPress={() => {
 								setIsUpdatingBoard(isUpdatingBoard ? false : item.id);
 								setModalVisible(true);
 							}}
 						>
-							<Text style={tw`text-xs text-blue-900 h-20`}> Update Board </Text>
+							<FontAwesome name="edit" size={24} color="white" />
 						</Pressable>
-						<Pressable
-							style={tw``}
-							onPress={() => {
-								deleteBoard(item.id);
-							}}
-						>
-							<Text style={tw`text-xs text-blue-900 h-20 `}>
-								{" "}
-								Delete Board{" "}
-							</Text>
-						</Pressable>
+					</View>
 
-						<Text style={tw`text-white text-lg text-center`}>
+					<View style={tw`flex-2`}>
+						<Text style={tw`text-white text-2xl self-center pt-3`}>
 							{" "}
 							{item.title}
 						</Text>
@@ -204,42 +198,47 @@ const UsersBoards = ({ navigation }) => {
 							{item.description}
 						</Text>
 					</View>
+
+					<View style={tw`flex-1`}>
+						<Pressable
+							style={tw``}
+							onPress={() => {
+								deleteBoard(item.id);
+							}}
+						>
+							<FontAwesome name="trash-o" size={24} color="white" />
+						</Pressable>
+					</View>
 				</View>
 			</Pressable>
 		);
 	};
 
 	return (
-		<View style={tw`flex-1  bg-black`}>
+		<View style={tw`flex-1  bg-cyan-300 opacity-90`}>
 			<SafeAreaView>
-				<View style={tw`text-center items-center  opacity-70`}>
-					<Text style={tw`text-white text-2xl text-center pt-4 underline`}>
-						{" "}
-						ALL BOARDS{" "}
-					</Text>
-
-					{/* button to create a new board */}
-					<View style={tw`border-2 border-white `}>
-						<Pressable
-							style={tw`border-white border-2 `}
-							onPress={() => {
-								setModalVisible();
-							}}
+				<View style={tw`flex-row pt-4 justify-around`}>
+					<View style={tw`text-center opacity-70`}>
+						<Text
+							style={tw`text-cyan-700 text-3xl
+            font-extrabold tracking-widest mb-6`}
 						>
-							<Text style={tw`text-lg text-center text-white`}>
-								{" "}
-								Add New Board{" "}
-							</Text>
-						</Pressable>
-						{/* <Button
-							style={tw`border-white border-2`}
-							title="add new board"
-							color="blue"
-							onPress={() => {
-								setModalVisible();
-							}}
-						/> */}
+							{" "}
+							ALL BOARDS{" "}
+						</Text>
 					</View>
+
+					<View style={tw``}>
+						<FontAwesome
+							name="plus-square"
+							size={30}
+							color="white"
+							onPress={() => setModalVisible()}
+						/>
+					</View>
+				</View>
+
+				<View style={tw``}>
 					<ModalBox
 						isOpen={modalVisible}
 						closeModal={() => {
@@ -258,15 +257,18 @@ const UsersBoards = ({ navigation }) => {
 									placeholder="Board Title"
 									value={board.title}
 									onChangeText={(text) => setBoard({ ...board, title: text })}
+									style={tw`py-5 font-black`}
 								/>
 								<TextInput
 									placeholder="Board Description"
 									value={board.description}
+									style={tw`py-5 font-black`}
 									onChangeText={(text) =>
 										setBoard({ ...board, description: text })
 									}
 								/>
 								<Pressable
+									style={tw`py-5`}
 									onPress={() => {
 										if (isUpdatingBoard) {
 											updateBoard(isUpdatingBoard);
@@ -276,19 +278,21 @@ const UsersBoards = ({ navigation }) => {
 										setModalVisible(false);
 									}}
 								>
-									<Text>{isUpdatingBoard ? "Update Board" : "Add Board"}</Text>
+									<Text style={tw`font-bold`}>
+										{isUpdatingBoard ? "Update Board" : "Add Board"}
+									</Text>
 								</Pressable>
 							</>
 						}
 					/>
 				</View>
 
-				<View style={tw`flex-row items-center  my-4`}>
+				<View style={tw`flex-row items-center `}>
 					<View
 						style={tw`flex-column flex-1 pt-1 opacity-90 w-96 items-stretch justify-center`}
 					>
 						{/* list of all users boards */}
-						<View style={tw`m-12`}>
+						<View style={tw`m-2`}>
 							<FlatList data={userBoards} renderItem={renderItems} />
 						</View>
 					</View>

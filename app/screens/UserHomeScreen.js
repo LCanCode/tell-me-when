@@ -6,25 +6,32 @@ import NavBar from "../components/NavBar";
 
 const UserHomeScreen = ({ navigation }) => {
 	return (
-		<View style={tw`flex-1 items-center bg-black `}>
-      {/* <View> */}
-        {/* <SearchBar /> */}
-        {/* <Text style={tw`text-white text-2xl py-3`}> Search Bar Place Holder</Text> */}
-      {/* </View> */}
-      <View>
+		<View style={tw`flex-1 bg-cyan-300 opacity-90 w-100 `}>
+
+      <View style={tw`flex-shrink`}>
         <NavBar />
       </View>
-			<View style={tw`p-7 flex-basis-auto gap-3 items-center my-15  `}>
-				<Pressable style={tw`h-auto border-white border-2 rounded-md px-6 my-4.5`} onPress={() => navigation.navigate("Users Boards")}>
-					<Text style={tw`text-2xl font-bold my-0 text-white py-3 `}> My Boards </Text>
+
+			<View style={tw`flex-3 items-center mt-25 `}>
+        <View style={tw`justify-center border-2 rounded-lg border-cyan-700 w-50 h-20 m-6 p-6 bg-orange-100`}>
+				<Pressable style={tw``} onPress={() => navigation.navigate("Users Boards")}>
+					<Text style={tw`self-center text-cyan-700 text-xl font-black`}> My Boards </Text>
 				</Pressable>
-				<Pressable style={tw`h-auto border-white border-2 rounded-md px-6 my-4.5`}onPress={() => navigation.navigate("Calendar")}>
-					<Text style={tw`text-2xl font-bold my-0 text-white py-3 `}> Calendar </Text>
+        </View>
+
+        <View style={tw`justify-center border-2 rounded-lg border-cyan-700 w-50 h-20 m-6 p-6 bg-orange-100`}>
+				<Pressable style={tw``}onPress={() => navigation.navigate("Calendar")}>
+					<Text style={tw`self-center text-cyan-700 text-xl font-black`}> Calendar </Text>
 				</Pressable>
-				<Pressable style={tw`h-auto border-white border-2 rounded-md px-6 my-4.5`} onPress={() => navigation.navigate("Agenda")}>
-					<Text style={tw`text-2xl font-bold my-0 text-white py-3 `}> Agenda </Text>
+        </View>
+
+
+        <View style={tw`justify-center border-2 rounded-lg border-cyan-700 w-50 h-20 m-6 p-6 bg-orange-100`}> 
+				<Pressable style={tw``} onPress={() => navigation.navigate("Agenda")}>
+					<Text style={tw`self-center text-cyan-700 text-xl font-black`}> Agenda </Text>
 				</Pressable>
 			</View>
+      </View>
 		</View>
 	);
 };

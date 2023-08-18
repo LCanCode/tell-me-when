@@ -5,7 +5,7 @@ import { collection, getDocs, query, doc } from "firebase/firestore";
 import { SectionList } from "react-native";
 import * as Notifications from "expo-notifications";
 import { Agenda } from "react-native-calendars";
-import tw from 'twrnc';
+import tw from "twrnc";
 
 const AgendaScreen = ({ navigation }) => {
 	const [sectionData, setSectionData] = useState([]);
@@ -62,8 +62,8 @@ const AgendaScreen = ({ navigation }) => {
 		getAllTasks();
 	}, []);
 
-  const tasks = {
-		"2023-08-16": [{ title: "two"}, { title: "hi" }],
+	const tasks = {
+		"2023-08-16": [{ title: "two" }, { title: "hi" }],
 	};
 
 	useEffect(() => {
@@ -75,37 +75,55 @@ const AgendaScreen = ({ navigation }) => {
 		return () => subscription.remove();
 	}, []);
 
-  const newAgendaDate = sectionData.reduce((accumulator, section) => {
-    accumulator[section.title] = section.data;
-    return accumulator;
-    console.log(newAgendaDate);
-  }, {})
+	const newAgendaDate = sectionData.reduce((accumulator, section) => {
+		accumulator[section.title] = section.data;
+		return accumulator;
+		console.log(newAgendaDate);
+	}, {});
 
 	return (
-		<SafeAreaView>
-			<View style={{ height: 600 }}>
+		<SafeAreaView style={tw`flex-1 bg-gray-100`}>
+			<Text style={tw`text-center text-cyan-700 text-3xl underline font-bold`}>
+				{" "}
+				TASK DUE
+			</Text>
+			{/* <View style={{ height: 600 }}>
 				<Agenda
 					items={newAgendaDate}
 					renderItem={(items) => (
-						<View style={tw`h-5, pt-2`}>
-							<Text>{items}</Text>
+						<View style={tw`h-50, pt-2`}>
+							<Text style={tw`self-center`}>{items}</Text>
+						</View>
+					)}
+				/>
+			</View> */}
+			{/* <Text>AgendaScreen</Text> */}
+
+			{/* take task data and make data object for section list */}
+			<View style={tw`p-4 `}>
+				<SectionList
+					sections={sectionData}
+					keyExtractor={(item, index) => item + index}
+					renderItem={({ item }) => (
+						<View>
+							<View style={tw`my-2`}>
+								<Text
+									style={tw`text-center text-cyan-700 text-xl font- p-2 border-2 rounded-lg border`}
+								>
+									{item}
+								</Text>
+							</View>
+						</View>
+					)}
+					renderSectionHeader={({ section: { title } }) => (
+						<View style={tw`m-4`}>
+							<Text style={tw`text-center text-cyan-700 text-xl font-black`}>
+								{title}
+							</Text>
 						</View>
 					)}
 				/>
 			</View>
-			<Text>AgendaScreen</Text>
-
-			{/* take task data and make data object for section list */}
-			{/* <SectionList
-				sections={sectionData}
-				keyExtractor={(item, index) => item + index}
-				renderItem={({ item }) => (
-					<View>
-						<Text>{item}</Text>
-					</View>
-				)}
-				renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
-			/> */}
 		</SafeAreaView>
 	);
 };
